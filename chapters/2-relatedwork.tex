@@ -1,0 +1,42 @@
+\chapter{Related Work}\label{chap:relatedwork}
+There are many works in the field of semantic segmentation in recent years, both discussing object scene segmentation and road segmentation.
+The field of semantic segmentation using trainable neural network models started in 1989 with the work of Eckhorn et al. and their paper describing how the visual cortex of a cat functions and its implications for network models \cite{eckhorncat}.
+This early method used a pulse coupled neural network, which produced synchronous bursts of pulses, effectively grouping the neurons by phase and pulse frequency, which can then be analyzed for feature extraction.
+
+In recent years, models using CNNs have become more commonly used for this task.
+CNNs were originally designed to be able to encode feature information in an image of object classification.
+"Very Deep Convolutional Networks for Large-Scale Image Recognition" by Karen Simonyan and Andrew Zisserman was one of the earlier works to show that this network setup could result in very high accuracy image classification \cite{vgg}.
+
+\todo{resnet improved on this.}\cite{resnet}.
+
+"Fully Convolutional Networks for Semantic Segmentation" by Jonathan Long et al. took these CNNs and added fully connected layers to take the encoded features and use it for semantic segmentation~\cite{fcn}.
+This paper laid out a novel approach to the problem as a dense image classification problem.
+In essence, they proposed that image segmentation is nothing more than image classification on a per-pixel basis.
+As such, previously developed CNNs for image classification could be used and indeed, they implemented their model based on the ResNet network
+
+From these image segmentation networks, further refinements have been made for networks dedicated to road segmentation.
+We investigated two of these state-of-the-art models.
+The first was PSPNet, proposed in "Pyramid Scene Parsing Network" by Hengshuang Zhao et al.~\cite{pspnet}.
+This paper proposed using a pyramid scheme to counter the fact that features would get smaller the further they are from the camera. \todo{Include image explaining this.}
+The second is DeepLab v3+, which became the basis of the network we used for CurbNet. DeepLab v3+ was proposed in "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation" by Liang-Chieh Chen et al. \cite{deeplab}. \todo{explain paper a bit}.
+
+Thus far, there seems to be no works related directly to the goal of this thesis; the semantic segmentation of curbs and curb cuts using computer vision.
+Research into curb detection is quite plentiful, with even one work from ETH Zürich being made specifically for the Obelix robotic platform~\cite{ethobelix}.
+Curb Detection for a Pedestrian Robot in Urban Environments" by Jérôme Maye, Ralf Kaestner, and Roland Siegwart used the LIDAR sensors that Obelix has to map the world around it and detect the different horizontal planes.
+A sudden change in the vertical position of the plane would thus be classified as a curb.
+Unfortunately, this work does not take into account curb cuts.
+
+The only work we were able to find that specifically address curb cuts was "WalkNet: A Deep Learning Approach to Improving Sidewalk Quality and Accessibility" by Andrew Abbott et al. \cite{walknet}.
+This paper discusses the use of a deep neural network to classify images in which curb cuts existed.
+Their goal was the use of Google Street View data to map which intersections in a city already had curb cuts and which didn't.
+This data would then be supplied to city governments to provide relevant information regarding accessibility and sidewalk quality.
+Unfortunately, this work only classified images which contained curb cuts and the neural network architecture they used was not described in depth.
+
+%- resnet
+%- vgg
+%- fcn
+%- GoogLeNet
+%
+%For road segmentation we looked at:
+%- DeepLab v3+
+%- PSPNet
