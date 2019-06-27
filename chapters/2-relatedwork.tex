@@ -1,42 +1,55 @@
 \chapter{Related Work}\label{chap:relatedwork}
-There are many works in the field of semantic segmentation in recent years, both discussing object scene segmentation and road segmentation.
-The field of semantic segmentation using trainable neural network models started in 1989 with the work of Eckhorn et al. and their paper describing how the visual cortex of a cat functions and its implications for network models \cite{eckhorncat}.
+CurbNet uses semantic scene segmentation to identify curbs and curb cuts.
+As such, related works can be divided into two categories: semantic segmentation and curb detection.
+The following is a discussion of relevant related works.
+
+\section{Semantic Scene Segmentation}\label{section:relatedwork-segmentation}
+There are many works in the field of semantic scene segmentation in recent years, both discussing object scene segmentation and road segmentation.
+The field of semantic segmentation using trainable neural network models started in 1989 with the pioneering work of Eckhorn et al. and their paper describing how the visual cortex of a cat functions and its implications for network models \cite{eckhorncat}.
 This early method used a pulse coupled neural network, which produced synchronous bursts of pulses, effectively grouping the neurons by phase and pulse frequency, which can then be analyzed for feature extraction.
 
-In recent years, models using CNNs have become more commonly used for this task.
-CNNs were originally designed to be able to encode feature information in an image of object classification.
-"Very Deep Convolutional Networks for Large-Scale Image Recognition" by Karen Simonyan and Andrew Zisserman was one of the earlier works to show that this network setup could result in very high accuracy image classification \cite{vgg}.
+In the same year, Y. LeCun et al. developed the first algorithm to use backpropagation and convolutional neural networks to identify and classify images~\cite{zipcode}.
+Their paper titled "Backpropagation Applied to Handwritten Zip Code Recognition" proposed that using convolutional filters directly on an image input and training using backpropagation could reliably classify images into predetermined classes.
+This was the first network architecture that took a normalized image as input and returned the image class directly as an output.
+LeCun et al. also showed that using backpropagation to learn the convolutional filter coefficients performed significantly better than hand selected coefficients.
+This pioneering work set the stage for modern day image classification and segmentation algorithms using CNNs and automated learning.
 
-\todo{resnet improved on this.}\cite{resnet}.
+"Very Deep Convolutional Networks for Large-Scale Image Recognition" by Karen Simonyan and Andrew Zisserman was one of the earlier works to show that a deeper network setup could result in very high accuracy image classification \cite{vgg}.
+Their setup improved upon the use of convolutional neural networks by proposing instead to use small $\left(3 \times 3\right)$ convolutional filters and changing the depth to 16-19 layers.
+This network is now commonly known as VGG16 - VGG19, the number representing layer depth.
+This simple change in architectural designed resulted in their architecture securing first and second place in the ImageNet Challenge 2014 localization and classification tracks respectively.
+Unfortunately, these very deep networks tended to overfit on smaller datasets and were difficult to train.
 
-"Fully Convolutional Networks for Semantic Segmentation" by Jonathan Long et al. took these CNNs and added fully connected layers to take the encoded features and use it for semantic segmentation~\cite{fcn}.
-This paper laid out a novel approach to the problem as a dense image classification problem.
+"Deep Residual Learning for Image Recognition" by Kaiming He et al. proposed a solution to this problem~\cite{resnet}.
+They reformulate the layers as learning residual functions and use the layer inputs as references.
+This architecture is now commonly known as ResNet.
+By doing so, they were able to empirically show that their residual networks are easier to optimize and have lower complexity despite being up to eight times deeper than VGG networks.
+ResNet was able to obtain a 28\% relative improvement on the COCO object detection dataset compared to previous methods \cite{coco}.
+
+"Fully Convolutional Networks for Semantic Segmentation" by Jonathan Long et al. took these classification networks and added fully connected layers to take the encoded features and use it for semantic segmentation~\cite{fcn}.
+This paper laid out a novel insight to the problem of image segmentation as nothing more than a dense image classification problem.
+The proposed network architecture is now commonly referred to as FCN.
 In essence, they proposed that image segmentation is nothing more than image classification on a per-pixel basis.
-As such, previously developed CNNs for image classification could be used and indeed, they implemented their model based on the ResNet network
+As such, previously developed CNNs for image classification could be used and indeed, they implemented their model based on VGG16.
+Their network based on VGG16 was able to outperform competing state-of-the-art approaches on the PASCAL Visual Object Challenge dataset by a relative margin of 20\%.
 
-From these image segmentation networks, further refinements have been made for networks dedicated to road segmentation.
-We investigated two of these state-of-the-art models.
-The first was PSPNet, proposed in "Pyramid Scene Parsing Network" by Hengshuang Zhao et al.~\cite{pspnet}.
-This paper proposed using a pyramid scheme to counter the fact that features would get smaller the further they are from the camera. \todo{Include image explaining this.}
-The second is DeepLab v3+, which became the basis of the network we used for CurbNet. DeepLab v3+ was proposed in "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation" by Liang-Chieh Chen et al. \cite{deeplab}. \todo{explain paper a bit}.
+DeepLab v3+ was proposed in "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation" by Liang-Chieh Chen et al. and improves on FCN by refining the segmentation, especially along object boundaries \cite{deeplab}.
+DeepLab v3+ became the basis of the network we used for CurbNet.
+Using pyramid pooling and an improved encoder-decoder architecture, DeepLab v3+ achieve 89.0\% accuracy on the Cityscapes dataset \cite{cityscapes}.
 
-Thus far, there seems to be no works related directly to the goal of this thesis; the semantic segmentation of curbs and curb cuts using computer vision.
+\section{Curb Detection}\label{section:relatedwork-curbdetection}
 Research into curb detection is quite plentiful, with even one work from ETH Zürich being made specifically for the Obelix robotic platform~\cite{ethobelix}.
-Curb Detection for a Pedestrian Robot in Urban Environments" by Jérôme Maye, Ralf Kaestner, and Roland Siegwart used the LIDAR sensors that Obelix has to map the world around it and detect the different horizontal planes.
-A sudden change in the vertical position of the plane would thus be classified as a curb.
-Unfortunately, this work does not take into account curb cuts.
+Curb Detection for a Pedestrian Robot in Urban Environments" by Jérôme Maye, Ralf Kaestner, and Roland Siegwart used the LIDAR sensors that Obelix has to map the world around it.
+Using this point cloud data, a virtual representation of the environment can be computed and horizontal planes from the scene extracted.
+By detecting sudden changes in the vertical position of horizontal planes, a curb can be implicitly identified.
+This relies on the assumption that curbs take the form of vertical planes connecting two horizontal planes.
+Unfortunately, this work does not take into account curb cuts, which may not necessarily form a significant vertical height difference and are usually sloped.
 
-The only work we were able to find that specifically address curb cuts was "WalkNet: A Deep Learning Approach to Improving Sidewalk Quality and Accessibility" by Andrew Abbott et al. \cite{walknet}.
+The only work we were able to find that specifically address curb cuts was "WalkNet: A Deep Learning Approach to Improving Sidewalk Quality and Accessibility" by Andrew Abbott et al.~\cite{walknet}.
 This paper discusses the use of a deep neural network to classify images in which curb cuts existed.
 Their goal was the use of Google Street View data to map which intersections in a city already had curb cuts and which didn't.
-This data would then be supplied to city governments to provide relevant information regarding accessibility and sidewalk quality.
+This data would then be supplied to city governments to provide relevant information regarding sidewalk accessibility and quality.
 Unfortunately, this work only classified images which contained curb cuts and the neural network architecture they used was not described in depth.
+As such, we were unable to use any part of their research, despite being one of the few papers published regarding curb cuts.
 
-%- resnet
-%- vgg
-%- fcn
-%- GoogLeNet
-%
-%For road segmentation we looked at:
-%- DeepLab v3+
-%- PSPNet
+Thus far, there seems to be no works related directly to the goal of this thesis; the semantic segmentation of curbs and curb cuts using computer vision.
