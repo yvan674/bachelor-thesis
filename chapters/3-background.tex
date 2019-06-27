@@ -43,7 +43,7 @@ Many activation functions exists and are used including the identity function an
 
 Between each neuron in the network are connections which transfer the output of neuron $i$ to neuron $j$. Each of these connections are assigned a weight and potentially a bias term and is computed by the propagation function to provide a neuron its input $p_j(t)$. This typically is defined as:
 \begin{align}
-	p_j(t) $= \sum_{i}o_i(t)w_{ij} + w_{0j}~,~\text{where } w_{0j} \text{ is the bias, if it exists.
+	p_j(t) &= \sum_{i}o_i(t)w_{ij} + w_{0j}~,~\text{where } w_{0j} \text{ is the bias, if it exists.}
 \end{align}
 
 Learning occurs by using an algorithm to modify the parameters of the neural network.
@@ -75,9 +75,22 @@ A discussion of the state-of-the-art of curb and curb cut segmentation would be 
 
 There are quite a few papers regarding the identification and localization of curbs using LIDAR sensors, but none that specifically tackle the problem of curb cuts and none that use computer vision approaches.
 The challenge for curb segmentation is the relatively small size of curbs in relation to everything else in the scene.
-As such, the training dataset is heavily unbalanced.
+As such, there is a heavy class imbalance.
 With such an unbalanced dataset, it is possible for a neural network to simply optimize towards classifying no curbs at all, since this would produce a reasonably low loss.
 
 Furthermore, the segmentation and differentiation between curbs and curb cuts using a single image with no depth information is quite difficult, as visually, curbs and curb cuts can seem very similar.
 
 \section{Loss Functions}\label{section:background-loss}
+The loss function $l$ maps the output of the neural network $\hat{y}$ and the target $y$ onto a real number and represents the "cost" of an output.
+The goal of learning is to minimize this cost value, known as the network loss.
+Effectively, the loss function measures the difference between the predicted value and the target.
+In our case, the target value is the ground truth labeling of an image and the output is the predicted labeling from the network.
+There are many different loss functions used, but for the purposes of image segmentation, the most commonly used function is cross entropy loss or weighted cross entropy loss.
+
+Cross entropy loss is the loss function most commonly used for image segmentation networks. The weighted variant, known simply as weighted cross entropy loss, is the basis of the custom loss function we use for CurbNet and is defined as:
+\begin{align}
+	\text{loss}(x, class) &= weight[class]\left(-x[class] + \left(\sum_{j}\exp(x[j])\right)\right)
+\end{align}
+where $x$ is the predicted labeling, $class$ is the ground truth labeling, $weight$ is the weight given to each class, and $j$ is the individual pixels in $x$.
+
+An intuitive explanation of cross entropy loss
