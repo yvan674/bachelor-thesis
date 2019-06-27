@@ -17,6 +17,10 @@
   % Last language is the preferred one.
   english]{scrbook}
 \usepackage[ngerman, english]{babel} % If you write mainly in English change order to ngerman, english. Also change that in the documentclass options above.
+
+% Other custom packages
+\usepackage{amsmath}
+
 % Include of titling must happen before \title etc.
 % that's why it's not in setup.tex
 \usepackage{titling}
@@ -44,13 +48,15 @@
     % enable/disable, depending on your chosen language
     \input{chapters/0_0-titlepage_en}
 
-    \pagestyle{plain} % remove chapter name from top, page number at the bottom
+%    \pagestyle{plain} % remove chapter name from top, page number at the bottom
+	\pagestyle{headings}
     % use \pagestyle{headings} for having the chapter on top of the pages
     % if you wang a more fancy header use \usepackage[automark,headsepline]{scrlayer-scrpage}
     % and read about it in the KOMA script documentation, https://www.ctan.org/pkg/koma-script
     \frontmatter  % roman page numbers
     \input{chapters/0_1-declaration}
     \input{chapters/0_2-abstract}
+    \input{chapters/0_3-acknowledgments}
     \tableofcontents
     \listoffigures
     \listoftables
@@ -64,7 +70,6 @@
     \input{chapters/4-approach}
     \input{chapters/5-experiments}
     \input{chapters/6-conclusions}
-    \input{chapters/7-acknowledgments}
     
     % If you want a list of your ToDos at the end of the document
     % don't forget to remove before submission!

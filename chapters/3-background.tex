@@ -1,1 +1,83 @@
 \chapter{Background}\label{chap:background}
+The basis of CurbNet is semantic scene segmentation using convolutional neural networks.
+As such, it is imperative that the reader has an understanding of the principles behind semantic scene segmentation and convolutional neural networks.
+This chapter on the background of this work will discuss semantic scene segmentation, machine learning with artificial neural networks and convolutional neural networks, curb segmentation, loss functions, and network optimizers.
+
+\section{Semantic Scene Segmentation}\label{section:background-segmentation}
+Unlike image classification, which predicts what an entire scene is, semantic scene segmentation is the processing of an image and assigning class labels to each individual pixel~\cite{segmentation-medium}.
+This allows for finer details and adds the ability to locate and classify multiple objects in a scene.
+For example, the image in figure \todo{add image} has been segmented and the result is figure \todo{add segmented}.
+Each pixel of the image has been assigned an associated class, in this case, \todo{add classes segmented}
+This allows a computer or program to understand what objects are in the image it is shown.
+
+By segmenting an image in this way, the program can interpret the scene or its environment semantically similarly to the way a human might.
+For example, by receiving the segmented image, a program can identify that there are line markings on the road and that there is a vehicle in front of it.
+The segmentation of images in this way is essential in many robotic implementations as it allows further higher level processing of the scene.
+
+In our case, being able to segment and identify curbs in a scene would allow Obelix to map the location of the surrounding curbs and curb cuts, allowing for the safe traversal from sidewalk to street level via curb cuts.
+
+Over the past few years, state-of-the-art methods in image segmentation have relied entirely on deep learning using CNNs to achieve better results.
+
+\section{Artificial Neural Networks}
+Artificial neural networks are a computing system inspired by biological neurons. Neural networks are comprised of neurons which are capable of taking any number of numerical inputs and outputs a numerical value. Mathematically, a single neuron is a time dependent function.
+The function of a neuron $j$ receiving input $p_j(t)$ and producing output $o_j(t)$ is composed of the activation $a_j(t)$, potentially a threshold $\Theta_j$, an activation function $f$ that returns the activation at time $t + 1$, and an output function $f_{out}$.
+The activation $a_j(t)$ can also be considered the neuron's state and is dependent on the time parameter $t$.
+The threshold $\Theta_j$, if it exists, is fixed unless a learning function changes it.
+The activation function $f$ calculates $a_j(t + 1)$ given $a_j(t)$, $\Theta_j$, and the network input $p_j(t)$ and can be defined as:
+\begin{align}
+	a_j(t + 1) &= f\left(a_j(t), \Theta_j, p_j(t)\right)
+\end{align}
+The output function $f_out$ computes $o_j(t)$ based on $a_j(t)$ and is defined as:
+\begin{align}
+	o_j(t) &= f_out\left(a_j(t)\right)
+\end{align}
+The output function is usually simply the identify function $f(x) = x$.
+Many activation functions exists and are used including the identity function and the rectified linear unit (ReLU), defined as:
+\begin{align}
+	f(x) &= 
+	\begin{cases}
+		0	& \text{for } x \leq 0\\
+		x	& \text{for } x > 0
+	\end{cases}
+\end{align}
+
+Between each neuron in the network are connections which transfer the output of neuron $i$ to neuron $j$. Each of these connections are assigned a weight and potentially a bias term and is computed by the propagation function to provide a neuron its input $p_j(t)$. This typically is defined as:
+\begin{align}
+	p_j(t) $= \sum_{i}o_i(t)w_{ij} + w_{0j}~,~\text{where } w_{0j} \text{ is the bias, if it exists.
+\end{align}
+
+Learning occurs by using an algorithm to modify the parameters of the neural network.
+
+Deep neural networks are so called due to having multiple "hidden" layers between the input and output.
+These hidden layers are not visible to the end user and their values are typically never accessed directly.
+
+\section{Convolutional Neural Networks}\label{section:background-cnn}
+Convolutional Neural Networks (CNNs) are a specific class of deep neural networks and have been found to perform exceptionally for image analysis, such as image classification and segmentation.
+The inspiration for CNNs come from biological processes to simulate the orgainization of the visual cortex in animals~\cite{cnnbiology}.
+Convolutional layers are the core build blocks of CNNs.
+These convolutional layers consist of a set of learnable filters which are convolved across the entire input and computing the dot products between the different entries of the filter.
+This allows the layer to activate when it detects a specific type of feature at some point in the input.\todo{convolution image}
+By using multiple convolutional layers, higher level features can be extracted and a feature map generated.
+
+For semantic scene segmentation applications, the convolutional layers that make up the CNN are called the feature encoder.
+The output of these convolutional layers are then fed into one or more fully connected linear layers to produce a classification of each pixel in a secene.
+These fully connected layers are called the decoder.
+The resulting classification produced is a probability of each pixel being a certain class.
+
+\section{Curbs and Curb Cuts}\label{section:background-curbs}
+Curbs are the edges of roads, or the separator between the road and some other area, usually a pedestrian sidewalk, and are usually stone or concrete.
+Curb cuts are "cuts" in the curb that allow a pedestrian sidewalk to have a gentle slope down to street level.
+Originally, these cuts were made to allow accessibility access, especially for those requiring wheelchairs, as to a wheelchair user, a curb is as good as a wall in terms of traversibility, as was discussed in the article "Curb Cuts" by Cynthia Gorney and Delaney Hall. These curb cuts first started appearing fifty years ago from the efforts of activist Ed Roberts and his push to make city streets more accessible.
+\todo{Include picture of a curb cut}
+
+\section{Curb Segmentation}\label{section:background-curbsegmentation}
+A discussion of the state-of-the-art of curb and curb cut segmentation would be moot, as there is no work we could find specifically discussing this topic.
+
+There are quite a few papers regarding the identification and localization of curbs using LIDAR sensors, but none that specifically tackle the problem of curb cuts and none that use computer vision approaches.
+The challenge for curb segmentation is the relatively small size of curbs in relation to everything else in the scene.
+As such, the training dataset is heavily unbalanced.
+With such an unbalanced dataset, it is possible for a neural network to simply optimize towards classifying no curbs at all, since this would produce a reasonably low loss.
+
+Furthermore, the segmentation and differentiation between curbs and curb cuts using a single image with no depth information is quite difficult, as visually, curbs and curb cuts can seem very similar.
+
+\section{Loss Functions}\label{section:background-loss}
