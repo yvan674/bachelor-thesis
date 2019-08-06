@@ -1,0 +1,83 @@
+\section{Hyperparameter Tuning}\label{section:background-hyperparameter}
+Hyperparameter tuning is the process of optimizing a model to find the hyperparameters that will perform the best according to a specified metric. This metric is usually either the validation loss or the validation accuracy.
+Hyperparameters are generally chosen by the researcher or using some other automated process, but is not learned as a part of the model itself as opposed to the model weights.
+
+Methods to find the optimal hyperparameters include manual tuning, grid search, random search, genetic algorithms, bayesian optimization, and hyperband, among others.
+Random and grid searches are very time-consuming and computationally expensive on all but the smallest of networks, as they potentially run less than optimal parameters and disregard previous runs.
+Bayesian optimization attempts to curtail this problem by taking previous runs into account, greatly speeding up the learning process and not experimenting with less than optimal hyperparameters \cite{bayesian}.
+Hyperband is a bandit-based approach to hyperparameter optimizations that can abandon or reduce the budget of an experimental run if it deems the results to be significantly poor \cite{hyperband}.
+
+\subsection{Bayesian Optimization}\label{subsection:background-bayesian}
+The idea behind Bayesian optimization is that the hyperparameters of a network follow a probabilistic distribution $\text{P}(y | x)$ where $y$ is the score determined by some objective function and $x$ is a set of hyperparameters.
+Based on this probabilistic model, an optimal set of hyperparameters can then be calculated.
+Applying these hyperparameters to the actual model the objective function can then be used to calculate the actual scores.
+The probabilistic distribution is the fine tuned and the process is repeated until the maximum number of iterations is reached.
+
+Bayesian optimization relies on the following \cite{bayesiantds}:
+\begin{enumerate}
+	\itemsep-1em
+	\item A clearly defined hyperparameter domain of possible configurations $\chi$ over which to search,
+	\item An objective function which calculates a score using a set of hyperparameters that we wish to minimize,
+	\item A surrogate model that represents the probabilistic distribution of the hyperparameters,
+	\item A selection function to evalute which hyperparameters should be evaluated next, and
+	\item A history of score-hyperparameter pairs used to update the surrogate model .
+\end{enumerate}
+The domain must be chosen by the researcher and is usually defined with regards to previous knowledge or based on related works.
+The objective function is calculated by running the actual model and calculating its error using a predetermined loss function.
+
+The surrogate model used is essentially a mapping of hyperparameters to scores from the objective function.
+An example for the surrogate model is the Tree-structured Parzen Estimator (TPE) \cite{tpe}.
+TPE takes advantage of Bayes' rule and represents the probability function $\text{P}(y~|~x)$ as
+\begin{align}\label{eq:bohb-1}
+	\text{P}(y~|~x) &= \frac{\text{P}(x~|~y) \cdot \text{P}(x)}{\text{P}(y)}\\
+	\text{with } \text{P}(x~|~y) &=
+	\begin{cases}
+	l(x) &\text{when } y < y^* \\
+	g(x) &\text{when } y \geq y^*
+	\end{cases}
+\end{align}
+where $y^*$ is a threshold value. $l(x)$ is thus a probability density function formed from the set of observations $x^i \in \chi$ which have been performed such that the loss of the network running with hyperparameters $x^i$ is less than $y^*$. 
+Conversely, $g(x)$ is the density function formed from the remaining observations.
+$y^*$ is chosen by the algorithm such that $\text{P}(y<y^*) = \gamma$ with $\gamma$ being a value chosen by the researcher.
+
+The selection function chooses which hyperparameters $x \in \chi$ should be chosen for each successive experiment and is commonly based on expected improvement \cite{bayesiantds}
+\begin{align}
+	EI_{y^*}(x) &= \int_{-\infty}^{y^*} (y^* - y) p(y~|~x)dy
+\end{align}
+Here, $y^*$ is again a threshold value, $x$ is the proposed set of hyperparameters, $y$ is the actual value of the objective function using hyperparameters $x$ and $p(y~|~x)$ is the surrogate probability model expressing the probability of $y$ given $x$.
+Substituting the values of $p(y~|~x)$ from the surrogate function we get
+\begin{align}
+	EI_{y^*}(x) &= \frac{\gamma y^* l(x) - l(x) \int_{-\infty}^{y^*}p(y)dy}{\gamma l(x) + (1 - \gamma)g(x)}\\
+	&\propto \left(\gamma + \frac{g(x)}{l(x)} (1 - \gamma)\right)^{-1}
+\end{align}
+We can see from this function that the expected improvement is proportional to $\frac{l(x)}{g(x)}$ and thus, to maximize the expected improvement, samples should be drawn from the maximum value in $l(x)$.
+The selected hyperparameters are then evaluated with regards to the objective function and the results used to update the surrogate model.
+
+\subsection{Hyperband}\label{section:background-hyperband}
+Hyperband is a learning strategy that "relies on a principled early-stopping strategy to allocate resources" \cite{hyperband}. 
+It is a variation of Successive Halving, and in fact uses successive halving in its inner loop.
+
+Successive halving randomly samples $n$ hyperparameter sets in the search domain $\chi$.
+It then evaluates all of these sets for $B$ iterations to calculate the validation loss.
+The lowest performing half is then discarded and the remaining evaluated for a further $B$ iterations.
+This is repeated until only 1 hyperparameter set remains.
+
+Successive halving suffers from the $n \text{ vs } \frac{B}{n}$ problem, which is whether to train more configurations $n$ or to explore fewer, but with more resources $B$.
+If a larger $n$ is chosen, configurations which are slower to converge might be killed off too quickly.
+If a larger $\frac{B}{n}$ is chosen, then lower performing configurations may be given more resources, thus wasting resources that could otherwise be spent on higher performing configurations \cite{hyperband}.
+
+Hyperband attempts to solve this issue by considering several possible values of $n$ for a fixed $B$.
+The pseudocode in Algorithm \ref{algorithm:hyperband} shows how Hyperband uses an outer loop, performing essentially a grid search with multiple values of $n$ and an inner loop utilizing a method similar to successive halving but with the top $\left\lfloor n_i/\eta\right\rfloor$ instead of the top half.
+
+\input{algorithms/hyperband}
+
+\subsection{Bayesian Optimization with Hyperband}\label{section:background-bohb}
+"BOHB: Robust and Efficient Hyperparameter Optimization at Scale" by Stefan Falkner, Aaron Klein, and Frank Hutter proposes a hyperparameter optimization approach which seeks to combine the benefits of both Bayesian optimization and Hyperband \cite{bohb}.
+This approach seeks to have strong anytime performance, strong final performance, effectively use parallel resources, be easily scalable, and be robust and flexible.
+
+BOHB works by using Hyperband to determine the number of configurations to evaluate with a given budget, but replaces the random selection of configurations with a Bayesian model based search.
+The process of using Bayesian optimization for configuration sampling can be seen in Algorithm \ref{algorithm:bohb}. In this algorithm, $l'(x)$ is the $l(x)$ component of the newly updated probability density function.
+
+Even though Hyperband also provides strong anytime performance compared to random search and Bayesian optimization, Fakner et al. observed an improvement of over 55x against a random search at larger budgets, converging to the global optimum much faster than either Hyperband or Bayesian optimization alone \cite{bohb}.
+
+\input{algorithms/bohb}

@@ -18,51 +18,7 @@ In our case, being able to segment and identify curbs in a scene would allow Obe
 
 Over the past few years, state-of-the-art methods in image segmentation have relied entirely on deep learning using CNNs to achieve better results.
 
-\section{Artificial Neural Networks}
-Artificial neural networks are a computing system inspired by biological neurons. Neural networks are comprised of neurons which are capable of taking any number of numerical inputs and outputs a numerical value. Mathematically, a single neuron is a time dependent function.
-The function of a neuron $j$ receiving input $p_j(t)$ and producing output $o_j(t)$ is composed of the activation $a_j(t)$, potentially a threshold $\Theta_j$, an activation function $f$ that returns the activation at time $t + 1$, and an output function $f_{out}$.
-The activation $a_j(t)$ can also be considered the neuron's state and is dependent on the time parameter $t$.
-The threshold $\Theta_j$, if it exists, is fixed unless a learning function changes it.
-The activation function $f$ calculates $a_j(t + 1)$ given $a_j(t)$, $\Theta_j$, and the network input $p_j(t)$ and can be defined as:
-\begin{align}
-	a_j(t + 1) &= f\left(a_j(t), \Theta_j, p_j(t)\right)
-\end{align}
-The output function $f_out$ computes $o_j(t)$ based on $a_j(t)$ and is defined as:
-\begin{align}
-	o_j(t) &= f_out\left(a_j(t)\right)
-\end{align}
-The output function is usually simply the identify function $f(x) = x$.
-Many activation functions exists and are used including the identity function and the rectified linear unit (ReLU), defined as:
-\begin{align}
-	f(x) &= 
-	\begin{cases}
-		0	& \text{for } x \leq 0\\
-		x	& \text{for } x > 0
-	\end{cases}
-\end{align}
-
-Between each neuron in the network are connections which transfer the output of neuron $i$ to neuron $j$. Each of these connections are assigned a weight and potentially a bias term and is computed by the propagation function to provide a neuron its input $p_j(t)$. This typically is defined as:
-\begin{align}
-	p_j(t) &= \sum_{i}o_i(t)w_{ij} + w_{0j}~,~\text{where } w_{0j} \text{ is the bias, if it exists.}
-\end{align}
-
-Learning occurs by using an algorithm to modify the parameters of the neural network.
-
-Deep neural networks are so called due to having multiple "hidden" layers between the input and output.
-These hidden layers are not visible to the end user and their values are typically never accessed directly.
-
-\section{Convolutional Neural Networks}\label{section:background-cnn}
-Convolutional Neural Networks (CNNs) are a specific class of deep neural networks and have been found to perform exceptionally for image analysis, such as image classification and segmentation.
-The inspiration for CNNs come from biological processes to simulate the orgainization of the visual cortex in animals~\cite{cnnbiology}.
-Convolutional layers are the core build blocks of CNNs.
-These convolutional layers consist of a set of learnable filters which are convolved across the entire input and computing the dot products between the different entries of the filter.
-This allows the layer to activate when it detects a specific type of feature at some point in the input.\todo{convolution image}
-By using multiple convolutional layers, higher level features can be extracted and a feature map generated.
-
-For semantic scene segmentation applications, the convolutional layers that make up the CNN are called the feature encoder.
-The output of these convolutional layers are then fed into one or more fully connected linear layers to produce a classification of each pixel in a secene.
-These fully connected layers are called the decoder.
-The resulting classification produced is a probability of each pixel being a certain class.
+\input{chapters/3_1-neural-networks}
 
 \section{Curbs and Curb Cuts}\label{section:background-curbs}
 Curbs are the edges of roads, or the separator between the road and some other area, usually a pedestrian sidewalk, and are usually stone or concrete.
@@ -85,12 +41,85 @@ The loss function $l$ maps the output of the neural network $\hat{y}$ and the ta
 The goal of learning is to minimize this cost value, known as the network loss.
 Effectively, the loss function measures the difference between the predicted value and the target.
 In our case, the target value is the ground truth labeling of an image and the output is the predicted labeling from the network.
-There are many different loss functions used, but for the purposes of image segmentation, the most commonly used function is cross entropy loss or weighted cross entropy loss.
+There are many different loss functions that are commonly used. For the purposes of image segmentation, the most commonly used function is cross entropy loss.
 
-Cross entropy loss is the loss function most commonly used for image segmentation networks. The weighted variant, known simply as weighted cross entropy loss, is the basis of the custom loss function we use for CurbNet and is defined as:
+The weighted variant, known simply as weighted cross entropy loss, is the basis of the custom loss function we use for CurbNet and is defined as:
 \begin{align}
-	\text{loss}(x, class) &= weight[class]\left(-x[class] + \left(\sum_{j}\exp(x[j])\right)\right)
+	\text{loss}(x, class) &= weight[class]\left(-\log\left(\frac{\text{exp}(x[class])}{\sum_{j}\text{exp}(x[j])}\right)\right)
 \end{align}
 where $x$ is the predicted labeling, $class$ is the ground truth labeling, $weight$ is the weight given to each class, and $j$ is the individual pixels in $x$.
 
-An intuitive explanation of cross entropy loss
+The use of cross entropy loss is to ensure that the cost increases exponentially as the predicted probability approaches zero.
+This due to its use of a negative log function, whose value exponentially increases as it approaches zero.
+Using the weighted version allows us to change how much each class contributes to the loss.
+We do this to counteract the class imbalance caused by how small spatially the curbs are relative to the rest of the scene.
+
+\section{Optimizers}\label{section:background-optimizers}
+During training, network parameters must be updated to minimize the loss function at each iteration.
+This is done by the optimizer.
+The optimizer updates the network parameters in such a way as to minimize the loss function \cite{optimizer-intro}.
+
+Gradient Descent is one of the oldest loss functions used.
+It works by calculating what a small change in each network parameter would do to the loss function, i.e. determines the optimal gradient for the current iteration.
+It then adjusts the network parameters according to this gradient.
+This process is repeated at each iteration to further minimize the loss function.
+This process can be time consuming, especially with larger datasets.
+Stochastic Gradient Descent (SGD) is a more commonly used variant of gradient descent and works similarly, but working only on randomly selected batches of the training data at each iteration \cite{optimizer-intro}.
+
+Adaptive Moment Estimation (Adam) is another loss function that is commonly used and the one implemented in CurbNet.
+It combines concepts from Adaptive Gradient Algorithm (AdaGrad), which has per-parameter learning rates, and Root Mean Square Propagation (RMSProp), whose learning rates are adapted based on the average of the magnitude of recent gradients \cite{adam}.
+Adam utilizes the concept of momentum, which incorporates previous gradients into the current one.
+It does this by calculating an exponential moving average and the square of previous gradients and using these to determine the next gradient.
+The original paper that proposed Adam, titled "Adam: A method for stochastic optimization" by Diederik Kingma and Jimmy Ba, also shows that Adam allows a network to converge faster than competing optimizers, including SGD \cite{adam}.
+
+\section{Back-propagation}\label{section:background-backpropagation}
+Back-propagation is a learning procedure used in artificial neural networks to adjust network weights and produce internal representations "important features in the task domain", first described the David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams in their paper "Learning representations by back-propagating errors" \cite{backprop}.
+Back-propagation efficiently and repeatedly adjusts the network weights to minimize the network error, which is calculated by the loss function.
+
+Calculating the network weights is done layer by layer, starting with the final output layer.
+The effect the output unit has on the loss is calculated first as
+\begin{align}\label{eq:loss-1}
+	\frac{\partial \text{loss}}{\partial y_j}
+\end{align}
+
+where $y_j$ is the output of a single unit in the final layer.
+The contribution of the input of the unit $j$ on the error can then be calculated using the value previously calculated in \eqref{eq:loss-1}
+\begin{align}\label{eq:loss-2}
+	\frac{\partial \text{loss}}{\partial x_j} &= \frac{\partial \text{loss}}{\partial y_j} \cdot \frac{\partial y_j}{\partial x_j}
+\end{align}
+We now have a description of how changing the input of unit $j$ will affect the loss.
+As such, we can then also represent how changing the weight $w_{ji}$ of a connection between the unit $j$ and a unit in the previous layer $i$ will effect the error as
+\begin{align}\label{eq:loss-3}
+	\frac{\partial \text{loss}}{\partial w_{ji}} &= \frac{\partial \text{loss}}{\partial x_j} \cdot \frac{\partial x_j}{\partial w_{ji}}
+\end{align}
+In this case, the previous layer means the layer which during forwards-propagation would be calculated immediately before the layer in which unit $j$ is.
+Again, due to the use of the chain rule, the previous value calculated in \eqref{eq:loss-2} can be used here.
+This gives us the contribution of the weight $w_{ji}$ on the error and, by multiplying by the learning rate, the amount by which the gradient must be changed for the next training iteration.
+
+The error contribution of the output of unit $i$ via a single successor unit $j$ can also similarly be calculated using the value from \eqref{eq:loss-2}.
+\begin{align}\label{eq:loss-4}
+	\frac{\partial \text{loss}}{\partial y_i} &= \frac{\partial \text{loss}}{\partial x_j} \cdot w_{ji}
+\end{align}
+Since unit $i$ is connected to multiple successor units, its value is a summation of its output contribution via all units $j \in J$, where $J$ is the set of all units in successive layers that $i$ is connected to.
+\begin{align}
+	\frac{\partial \text{loss}}{\partial y_i} &= \sum_{j \in J} \frac{\partial \text{loss}}{\partial x_j} \cdot w_{ji}
+\end{align}
+This calculation can be done in parallel, thanks to parallel computing architecture, completing to gradient calculations for the penultimate layer.
+This procedure is then repeated for all layers, each time using the previously computed values to allow for efficient computation.
+
+The main drawback of back-propagation is that it may approach local minima which are not the global minimum, at which point the network can potentially get stuck and become unable to improve.
+The addition of more units, thus increasing the weight dimensionality, can increase the number of paths out of local minima.
+Futhermore, the authors of the previously mentioned paper have also concluded that this is not a plausible model for how learning works in biological brains and, thus, that looking into other biologically based procedures may be useful.
+
+\input{chapters/3_2-hyperparameters}
+
+\section{Binary Dilation}\label{section:background-dilation}
+Binary dilation is a basic morphological operation and is usually represented by the operator $\oplus$.
+With regards to this work, binary dilation is used in our loss function.
+For a given binary image viewed as an integer grid $\mathbb{Z}^d$ for some dimension $d$, let $E$ be an integer grid, $A \in E$ a binary image, and $B \in \{0,1\}^d$ a structuring element.
+The binary dilation of $A$ by $B$ is then defined as:
+\begin{align}
+	A \oplus B &= \bigcup_{b \in B}A_b
+\end{align}
+where $A_b$ is the translation of $A$ by $b$.
+This can be seen as extending the area of the binary image $A$ by locus of the points covered by $B$ given that $B$ has a center on the origin \cite{morphology}.

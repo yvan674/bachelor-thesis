@@ -1,0 +1,16 @@
+\begin{algorithm}
+	\caption{\textsc{SuccessiveHalving}}\label{algorithm:successive-halving}
+
+	\SetKwInOut{Input}{Input}
+	\SetKwInOut{Output}{Output}
+	\SetKw{Initialize}{Initialize}
+	
+	\Input{Budget $B$, $n$ arms where $l_{i, k}$ denotes the $k$th loss from the $i$th arm}
+	\Initialize{$S_0 = [n]$}\\
+	\For{$k = 0, 1,...,\left\lceil \log_2(n)\right\rceil - 1$}{
+		Pull each arm in $S_k$ for $r_k = \left\lfloor \frac{B}{\left|S_k\right|\left\lceil \log_2(n)\right\rceil}\right\rfloor$ times.\\
+		Keep the best $\left\lfloor \frac{\left|S_k\right|}{2}\right\rfloor$ arms in terms of the $r_k$th observed loss as $S_{k+1}$\\
+	}
+	\Output{$\hat{i}, l_{\hat{i}\left\lfloor \frac{B/2}{\left\lceil\log_2(n)\right\rceil}\right\rfloor}$ where $\hat{i} = S_{\left\lceil\log_2(n)\right\rceil}$}
+
+\end{algorithm}

@@ -46,6 +46,7 @@
     \usepackage{amsmath}  % |
     \usepackage{amsthm}   % | math, bmatrix etc
     \usepackage{amsfonts} % |
+    \usepackage{mathtools}
     \usepackage{calc}  % calculate within LaTeX
     \usepackage[unicode=true,bookmarks=true,bookmarksnumbered=true,
                 bookmarksopen=true,bookmarksopenlevel=1,breaklinks=false,
@@ -57,7 +58,7 @@
     % You might not need the following packages, I only included them as they
     % are needed for the example floats
     % ------------------- functional, custom -------------------
-    \usepackage{algorithm,algpseudocode}
+    \usepackage[english, ruled]{algorithm2e}
     \usepackage{bm}  % bold greek variables (boldmath)
     \usepackage{tikz}
     \usetikzlibrary{positioning}  % use: above left of, etc
@@ -111,12 +112,16 @@
     \newcommand{\eqname}[1]{\tag*{#1}}
 
 
+    % -------------- Table column formatting commands --------------
+    \newcolumntype{L}{>{$}l<{$}}
+
+
     % ------------------- pdf settings -------------------
     % ADAPT THIS
     \hypersetup{pdftitle={\thetitle},
                 pdfauthor={\theauthor},
                 pdfsubject={Undergraduate thesis at the Albert Ludwig University of Freiburg},
-                pdfkeywords={deep learning, awesome algorithm,  undergraduate thesis},
+                pdfkeywords={deep learning, convolutional neural networks,  undergraduate thesis, urban scene segmentation, scene segmentation},
                 pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false}
 
 
@@ -129,12 +134,6 @@
 
 
     % ------------------- algorithm ---------------------
-    % Command to align comments in algorithm
-    \newcommand{\alignedComment}[1]{\Comment{\parbox[t]{.35\linewidth}{#1}}}
-    % define a foreach command in algorithms
-    \algnewcommand\algorithmicforeach{\textbf{foreach}}
-    \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
-
     % line spacing should be 1.5
     \renewcommand{\baselinestretch}{1.5}
 

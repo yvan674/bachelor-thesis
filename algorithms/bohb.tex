@@ -1,0 +1,21 @@
+\begin{algorithm}
+	\caption{\textsc{BOHB} algorithm for hyperparameter optimization}\label{algorithm:bohb}
+
+	\SetKwInOut{Input}{Input}
+	\SetKwInOut{Output}{Output}
+	\SetKw{Initialize}{Initialize}
+	
+	\Input{observations $D$, fraction of random runs $\rho$, percentile $q$, number of samples $N_s$, minimum number of points $N_min$ to build a model, and bandwidth factor $b_w$}
+	\Output{next configuration to evaluate}
+	
+	\If{rand() $< \rho$}{
+		\Return{random configuration}
+	}
+	$b = \text{arg max }\{D_b:|D_b|\geq N_min + 2\}$\\
+	\If{$b=\emptyset$}{
+		\Return{random configuration	
+	}}
+	fit P$(x~|~y)$ according to \eqref{eq:bohb-1}\\
+	draw $N_s$ samples according to $l'(x)$\\	
+	\Return{sample with highest ratio $l(x) / g(x)$}
+\end{algorithm}

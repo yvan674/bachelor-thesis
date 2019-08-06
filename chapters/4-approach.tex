@@ -1,9 +1,66 @@
 \chapter{Approach}\label{chap:approach}
-The approach usually starts with the problem definition and continues with what you have done. Try to give an intuition first and describe everything with words and then be more formal like `Let $g$ be ...'.
+To semantically segment urban scenes and extract predictions for curbs and curb cuts, we proposed to use a deep neural network based on the DeepLab v3+ architecture with a loss function inspired by "U-Net: Convolutional Networks for Biomedical Image Segmentation" by Olaf Ronneberger et al. \cite{unet}.
+In this chapter, the architecture used and an explanation of our loss function will be discussed.
 
-\section{Problem Definition}
-Start with a very short motivation why this is important. Then, as stated above, describe the problem with words before getting formal.
+\section{Architecture Selection} \label{section:approach-architectureselection}
+Relative to the entire image, curb and curb cut classes make up a relatively small proportion of the image, making up 0.986\% and 0.196\% of images on average respectively.
+As such, four networks with good known performance for urban scene segmentation were chosen and evaluated for their performance classifying curbs and curb cuts.
+We experimented with ENet, described in the paper "ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation" \cite{enet}; GoogLeNet ,described in the paper "Going Deeper with Convolutions" \cite{googlenet}; FCN16s, described in "Fully Convolutional Networks for Semantic Segmentation" \cite{fcn}; and DeepLab v3+, described in the paper "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation" \cite{deeplab}.
+To evaluate which network would have the most potential, we trained each network on a small subset of the whole dataset to find which networks would converge the fastest given a certain budget.
+This was done to compare how each network would perform classifying curbs and curb cuts.
 
-\section{First Part of the Approach}
+We came to use the DeepLab v3+ architecture after running these experiments due to significantly outperforming the other networks, as seen in \todo{make table}.
 
-\section{N-th Part of the Approach}
+\subsection{Modifications to DeepLab v3+}\label{section:approach-extendingdeeplab}
+Given that we are working with the assumption of a camera with a constant attitude, we can also make the assumption that curbs will be more likely towards the bottom and sides of an image.
+Therefore, we modified DeepLab v3+ by adding a preprocessing step which turns the input image into a five-dimensional tensor, with the fourth and fith dimensions being the x and y coordinates of the pixel, respectively.
+The initial convolutional layer was also modified to accept five channels as input.
+\extend{add image of example tensor input showing what each channel is}
+
+\subsection{Network Architecture}\label{section:approach-networkarchitecture}
+We propose to apply the DeepLab v3+ architecture to our stated problem of curb and curb cut classification with the modifications described in subsection \ref{section:approach-extendingdeeplab}.
+The architecture itself is described in Table \ref
+
+\begin{table}
+	\begin{tabular}{|c|c|}
+		content...
+	\end{tabular}
+\end{table}
+
+\section{Loss Function}\label{section:approach-lossfunction}
+Initially, the network was trained on standard cross entropy loss, but due to the severe class imbalance, this did not produce meaningful results with the network simply labeling everything as the 0th class, i.e. not curb or curb cut.
+We then used a weighted cross entropy loss function.
+The weights were chosen by taking the normalized inverse of the average proportion other, curb, and curb cut classes in the dataset.
+This provided better results, but was still not producing the results that we wanted \todo{make this sound more formal and include image}.
+
+Using the assumption that all curbs and curb cuts must be located along the perimeter of roads, we used a loss function inspired by the paper "U-Net: Convolutional Networks for Biomedical Image Segmentation" which we call Masked Cross Entropy (MCE) and can be seen in \eqref{eq:mce} \cite{unet}.
+The weighted cross entropy loss function was modified to penalize according to the given weights when labeling within a certain border around road classes, which we call the mask $M$.
+We define road classes $\text{class}_{\text{road}}$ as all classes which can reasonably be expected to be found on roads, including road, road markings, potholes, etc.
+This mask was calculated using a binary dilation on a full $b \times b$ matrix $B$ where $b$ is $0.03 \times \text{image}_{width}$ on the road class, then subtracted by the road class itself.
+Thus, this can be formalized as follows:
+\begin{align}
+	B &= \underbrace{
+			\begin{bmatrix}
+				1  & \cdots & 1\\ 
+				\vdots &  \ddots & \vdots\\ 
+				1 &  \cdots & 1
+				\end{bmatrix}}_{b \text{ columns and } b \text{ rows}} \\
+	M &= \left(\text{class}_{\text{road}} \oplus B\right) - \text{class}_{\text{road}}
+\end{align}
+
+The value 0.03 was chosen by the researcher after looking at samples in the dataset and measuring what area around roads are typically curbs.
+The road class was simply taken from the ground truth data.
+Any labeling outside of $M$ by the network are then given an increased penalty, incentivizing the network to focus labeling around road edges.
+We chose to multiply the penalty for areas outside $M$ by a factor of 3.
+This can be seen in the following formalization of the loss function we used:
+\begin{align}\label{eq:mce}
+	\text{loss}_{MCE}(x, class) &= weight[class]\left(-\log\left(\frac{\text{exp}(x[class])}{\sum_{j}\text{exp}(x[j])}\right)\right)\\
+	\text{with } weight[class] &= 
+	\begin{cases}
+	weight'[class] & \text{if} x \in M\\
+	weight'[class] \cdot 3 & \text{if} x \notin M
+	\end{cases}
+\end{align}
+where $weight'[class]$ are the user defined weights. 
+This loss function operates on the assumption that curbs and curb cuts must be located adjacent to roads.
+A visualization of the resulting mask $M$ can be seen in \todo{image of mask}.

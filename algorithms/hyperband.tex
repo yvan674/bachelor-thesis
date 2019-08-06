@@ -1,0 +1,23 @@
+\begin{algorithm}
+	\caption{\textsc{Hyperband} algorithm for hyperparameter optimization}\label{algorithm:hyperband}
+
+	\SetKwInOut{Input}{Input}
+	\SetKwInOut{Output}{Output}
+	\SetKw{Initialize}{Initialize}
+	
+	\Input{$R,~\eta~ (\text{default} \eta = 3$)}
+	\Output{Configuration with the smallest intermediate loss seen so far.}
+	\Initialize{$s_{max} = \left\lfloor \log_\eta(R)\right\rfloor$, $B=(s_{max} + 1)R$}
+	
+	\For{$s \in s_{max}, s_{max} - 1,...,0$}{
+		$n = \left\lceil \frac{B}{R} \frac{\eta^s}{(s+1)}\right\rceil$\\
+		$r = R\eta^{-s}$\\
+		$T = $ get\_hyperparameter\_configuration$(n)$\\
+		\For{$i \in \{0,...,s\}$}{
+			$n_i = \left\lfloor n \eta^{-i}\right\rfloor$ \\
+			$r_i = r \eta^i$ \\
+			$L = $\{run\_then\_return\_validation\_loss$(t,r_i) : t \in T$\}\\
+			$T = $top\_k$(T,L, \left\lfloor n_i / \eta \right \rfloor)$\\
+		}
+	}
+\end{algorithm}
