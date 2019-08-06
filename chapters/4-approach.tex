@@ -19,13 +19,12 @@ The initial convolutional layer was also modified to accept five channels as inp
 
 \subsection{Network Architecture}\label{section:approach-networkarchitecture}
 We propose to apply the DeepLab v3+ architecture to our stated problem of curb and curb cut classification with the modifications described in subsection \ref{section:approach-extendingdeeplab}.
-The architecture itself is described in Table \ref
+The architecture itself is given in Figures \todo{ref figures} with further descriptions in Tables \ref{tab:drn}-\ref{tab:decoder}.
 
-\begin{table}
-	\begin{tabular}{|c|c|}
-		content...
-	\end{tabular}
-\end{table}
+\input{tables/drn}
+\input{tables/bottleneck}
+\input{tables/aspp}
+\input{tables/decoder}
 
 \section{Loss Function}\label{section:approach-lossfunction}
 Initially, the network was trained on standard cross entropy loss, but due to the severe class imbalance, this did not produce meaningful results with the network simply labeling everything as the 0th class, i.e. not curb or curb cut.

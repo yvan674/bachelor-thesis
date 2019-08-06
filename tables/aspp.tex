@@ -1,0 +1,16 @@
+\begin{table}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{@{}clL@{}}
+		\toprule
+		Layer & Module & \text{Parameters} \\ \midrule
+		0 & Convolution + ReLU & \text{in}=512,~\text{out}=256,~\text{kernel}=1,~\text{stride}=1 \\ \midrule
+		1 & Convolution + ReLU & \text{in}=512,~\text{out}=256,~\text{kernel}=1,~\text{stride}=1 \\ \midrule
+		2 & Convolution + ReLU & \text{in}=512,~\text{out}=256,~\text{kernel}=1,~\text{stride}=1 \\ \midrule
+		3 & Convolution + ReLU & \text{in}=512,~\text{out}=256,~\text{kernel}=1,~\text{stride}=1 \\ \midrule
+		\multirow{2}{*}{4} & Global Average Pool & \text{in}=1280,~\text{out}=256 \\
+		 & Dropout & p=0.5 \\ \bottomrule
+	\end{tabular}
+	}
+	\caption{Atrous Spatial Pyramid Pooling (ASPP) Module Details}
+	\label{tab:aspp}
+\end{table}

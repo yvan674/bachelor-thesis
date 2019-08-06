@@ -1,0 +1,13 @@
+\begin{table}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{@{}clL@{}}
+		\toprule
+		Layer & Module & \text{Parameters} \\ \midrule
+		0 & Convolution & \text{in}=\text{in},~\text{out}=\text{low},~\text{kernel}=1,~\text{stride}=1 \\ \midrule
+		1 & Convolution & \text{in}=\text{low},~\text{out}=\text{low},~\text{kernel}=3,~\text{stride}=1 \\ \midrule
+		2 & Convolution + ReLU & \text{in}=\text{low},~\text{out}=\text{out},~\text{kernel}=1,~\text{stride}=1 \\ \bottomrule
+	\end{tabular}
+	}
+	\caption{Bottleneck Module Details}
+	\label{tab:bottleneck}
+\end{table}

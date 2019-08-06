@@ -1,0 +1,16 @@
+\begin{table}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{@{}clL@{}}
+		\toprule
+		Layer & Module & \text{Parameters} \\ \midrule
+		0 & Convolution + ReLU & \text{in}=256,~\text{out}=48,~\text{kernel}=1,~\text{stride}=1 \\ \midrule
+		\multirow{2}{*}{1} & Convolution + ReLU & \text{in}=304,~\text{out}=256,~\text{kernel}=3,~\text{stride}=1 \\
+		 & Dropout & p=0.5 \\ \midrule
+		\multirow{2}{*}{2} & Convolution + ReLU & \text{in}=256,~\text{out}=256,~\text{kernel}=3,~\text{stride}=1 \\
+		 & Dropout & p=0.5\\ \midrule
+		3 & Convolution & \text{in}=256,~\text{out}=3,~\text{kernel}=1,~\text{stride}=1 \\ \bottomrule
+	\end{tabular}
+	}
+	\caption{Decoder Module Details}
+	\label{tab:decoder}
+\end{table}

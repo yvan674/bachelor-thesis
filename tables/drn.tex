@@ -1,0 +1,31 @@
+\begin{table}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{@{}clL@{}}
+		\toprule
+		Layer & Module & \text{Parameters} \\ \midrule
+		0 & Convolution + ReLU & \text{in}=5,~\text{out}=16,~\text{kernel}=7,~\text{stride}=1 \\ \midrule
+		1 & Convolution + ReLU & \text{in}=16,~\text{out}=16,~\text{kernel}=3,~\text{stride}=1 \\ \midrule
+		2 & Convolution + ReLU & \text{in}=16,~\text{out}=32,~\text{kernel}=2,~\text{stride}=1 \\ \midrule
+		\multirow{3}{*}{3} & Bottleneck & \text{in}=32,~\text{low}=64,~\text{out}=256 \\
+		 & Bottleneck & \text{in}=256,~\text{low}=64,~\text{out}=256 \\
+		 & Bottleneck & \text{in}=256,~\text{low}=64,~\text{out}=256 \\ \midrule
+		\multirow{4}{*}{4} & Bottleneck & \text{in}=256,~\text{low}=128,~\text{out}=512 \\
+		 & Bottleneck & \text{in}=512,~\text{low}=128,~\text{out}=512 \\
+		 & Bottleneck & \text{in}=512,~\text{low}=128,~\text{out}=512 \\
+		 & Bottleneck & \text{in}=512,~\text{low}=128,~\text{out}=512 \\ \midrule
+		\multirow{6}{*}{5} & Bottleneck & \text{in}=512,~\text{low}=256,~\text{out}=1024 \\
+		 & Bottleneck & \text{in}=1024,~\text{low}=256,~\text{out}=1024 \\
+		 & Bottleneck & \text{in}=1024,~\text{low}=256,~\text{out}=1024 \\
+		 & Bottleneck & \text{in}=1024,~\text{low}=256,~\text{out}=1024 \\
+		 & Bottleneck & \text{in}=1024,~\text{low}=256,~\text{out}=1024 \\
+		 & Bottleneck & \text{in}=1024,~\text{low}=256,~\text{out}=1024 \\ \midrule
+		\multirow{3}{*}{6} & Bottleneck & \text{in}=1024,~\text{low}=512,~\text{out}=2048 \\
+		 & Bottleneck & \text{in}=2048,~\text{low}=512,~\text{out}=2048 \\
+		 & Bottleneck & \text{in}=2048,~\text{low}=512,~\text{out}=2048 \\ \midrule
+		7 & Convolution + ReLU & \text{in}=2048,~\text{out}=512,~\text{kernel}=3,~\text{stride}=1 \\ \midrule
+		8 & Convolution + ReLU & \text{in}=512,~\text{out}=512,~\text{kernel}=3,~\text{stride}=1  \\ \bottomrule
+	\end{tabular}
+	}
+	\caption{Dilated Residual Network Module Details}
+	\label{tab:drn}
+\end{table}
