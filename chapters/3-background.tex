@@ -29,60 +29,92 @@ Originally, these cuts were made to allow accessibility access, especially for t
 \todo{Include picture of a curb cut}
 
 \section{Loss Functions}\label{section:background-loss}
-The loss function $l$ maps the output of the neural network $\hat{y}$ and the target $y$ onto a real number and represents the "cost" of an output.
-The goal of learning is to minimize this cost value, known as the network loss.
+The loss function $\ell$ maps the output of a neural network $\hat{y}$ and the target $y$ onto a real number and represents the "cost" of an output.
+The goal of learning is to minimize this cost value, known as the error.
 Effectively, the loss function measures the difference between the predicted value and the target.
-In our case, the target value is the ground truth labeling of an image and the output is the predicted labeling from the network.
+In our case, the target value is the ground truth labeling of an image and the output is the softmax labeling from the network.
 There are many different loss functions that are commonly used. For the purposes of image segmentation, the most commonly used function is cross entropy loss.
 
-The weighted variant, known simply as weighted cross entropy loss, is the basis of the custom loss function we use for CurbNet and is defined as:
+\subsection{Cross Entropy Loss}\label{section:background-crossentropy}
+The cross entropy loss is formally defined as:
 \begin{align}
-	\text{loss}(x, class) &= weight[class]\left(-\log\left(\frac{\text{exp}(x[class])}{\sum_{j}\text{exp}(x[j])}\right)\right)
+	\ell(y, \hat{y}) &=\sum_{m}-y_m\log(\hat{y}_m)
 \end{align}
-where $x$ is the predicted labeling, $class$ is the ground truth labeling, $weight$ is the weight given to each class, and $j$ is the individual pixels in $x$.
+where $m$ is the class, $y_m$ the ground truth value for a class $m$, and $\hat{y}_m$ the softmax prediction of a class $m$ by the current model. 
+As such, cross entropy loss calculates the error of the model to classify a certain value correctly.
+The loss of two predictions could be the same, as long as the prediction for the true class, i.e. the class that has value 1 in $y$, remains constant.
+The loss is thus independent of how the probability is split between the remaining classes.
 
-The use of cross entropy loss is to ensure that the cost increases exponentially as the predicted probability approaches zero.
-This due to its use of a negative log function, whose value exponentially increases as it approaches zero.
+For example, let the ground truth classification be class 0, i.e. $y = \{1, 0, 0\}$ with one-hot encoding.
+Let the current model prediction be $\hat{y} = \{0.5, 0.2, 0.3\}$, also with one-hot encoding.
+The loss would then be:
+\begin{align}
+	\ell(y, \hat{y}) 	&= \sum_{m}-y_m \log(\hat{y}_m) \\
+						&= -(1)\log(0.5) + (-0)\log(0.2) + (-0)\log(0.3)\\
+						&= -\log(0.5) \\
+						&= 0.301...
+\end{align}
+
+Alternatively, if model prediction is exactly the same as the ground truth, then we would have:
+\begin{align}
+	y					&= \hat{y} = \{1, 0, 0\}\\
+	\ell(y, \hat{y}) 	&= \sum_{m}-y_m \log(\hat{y}_m) \\
+						&= -(1)\log(1) + (-0)\log(0) + (-0)\log(0)\\
+						&= -\log(1) \\
+						&= 0
+\end{align}
+
+Applying this on the full image, this becomes:
+\begin{align}
+	\ell(y, \hat{y}) &=\sum_u \sum_v \sum_{m}-y_{m, u, v}\log(\hat{y}_{m,u,v})
+\end{align}
+where $u$ and $v$ are the pixel coordinates.
+
+The weighted variant, known simply as weighted cross entropy loss, is defined as:
+\begin{align}
+	\ell(y, \hat{y}) &=\sum_{m}-y_m\log(\hat{y}_m) \cdot d_m
+\end{align}
+where $d_i$ is the weight for a given class $m$.
+
 Using the weighted version allows us to change how much each class contributes to the loss.
-We do this to counteract the class imbalance caused by how small spatially the curbs are relative to the rest of the scene.
+This is done to counteract class imbalance that could be caused by having an imbalance in the distribution or frequency of each class.
 
 \section{Optimizers}\label{section:background-optimizers}
 During training, network parameters must be updated to minimize the loss function at each iteration.
 This is done by the optimizer.
 The optimizer updates the network parameters in such a way as to minimize the loss function~\cite{optimizer-intro}.
 
-Gradient Descent is one of the oldest loss functions used.
-It works by calculating what a small change in each network parameter would do to the loss function, i.e. determines the optimal gradient for the current iteration.
+Gradient Descent is one of the earliest optimizers.
+It works by calculating what a small change in each network parameter would do to the loss function, i.e. determines the gradient for the current iteration.
 It then adjusts the network parameters according to this gradient.
 This process is repeated at each iteration to further minimize the loss function.
 This process can be time consuming, especially with larger datasets.
 Stochastic Gradient Descent (SGD) is a more commonly used variant of gradient descent and works similarly, but working only on randomly selected batches of the training data at each iteration~\cite{optimizer-intro}.
 
-Adaptive Moment Estimation (Adam) is another loss function that is commonly used and the one implemented in CurbNet.
+Adaptive Moment Estimation (Adam) is another optimizer that is commonly used and first proposed in the paper "Adam: A method for stochastic optimization" by Diederik Kingma and Jimmy Ba~\cite{adam}.
 It combines concepts from Adaptive Gradient Algorithm (AdaGrad), which has per-parameter learning rates, and Root Mean Square Propagation (RMSProp), whose learning rates are adapted based on the average of the magnitude of recent gradients~\cite{adam}.
 Adam utilizes the concept of momentum, which incorporates previous gradients into the current one.
 It does this by calculating an exponential moving average and the square of previous gradients and using these to determine the next gradient.
-The original paper that proposed Adam, titled "Adam: A method for stochastic optimization" by Diederik Kingma and Jimmy Ba, also shows that Adam allows a network to converge faster than competing optimizers, including SGD~\cite{adam}.
 
-\section{backpropagation}\label{section:background-backpropagation}
-backpropagation is a learning procedure used in artificial neural networks to adjust network weights and produce internal representations "important features in the task domain", first described the David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams in their paper "Learning representations by back-propagating errors"~\cite{backprop}.
+\section{Backpropagation}\label{section:background-backpropagation}
+Backpropagation is a learning procedure used in artificial neural networks to adjust network weights and produce internal representations "important features in the task domain", first described the David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams in their paper "Learning representations by back-propagating errors"~\cite{backprop}.
 backpropagation efficiently and repeatedly adjusts the network weights to minimize the network error, which is calculated by the loss function.
 
 Calculating the network weights is done layer by layer, starting with the final output layer.
 The effect the output unit has on the loss is calculated first as
 \begin{align}\label{eq:loss-1}
-	\frac{\partial \text{loss}}{\partial y_j}
+	\frac{\partial \ell}{\partial y_j}
 \end{align}
 
 where $y_j$ is the output of a single unit in the final layer.
 The contribution of the input of the unit $j$ on the error can then be calculated using the value previously calculated in \eqref{eq:loss-1}
 \begin{align}\label{eq:loss-2}
-	\frac{\partial \text{loss}}{\partial x_j} &= \frac{\partial \text{loss}}{\partial y_j} \cdot \frac{\partial y_j}{\partial x_j}
+	\frac{\partial\ell}{\partial x_j} &= \frac{\partial \ell}{\partial y_j} \cdot \frac{\partial y_j}{\partial x_j}
 \end{align}
 We now have a description of how changing the input of unit $j$ will affect the loss.
 As such, we can then also represent how changing the weight $w_{ji}$ of a connection between the unit $j$ and a unit in the previous layer $i$ will effect the error as
 \begin{align}\label{eq:loss-3}
-	\frac{\partial \text{loss}}{\partial w_{ji}} &= \frac{\partial \text{loss}}{\partial x_j} \cdot \frac{\partial x_j}{\partial w_{ji}}
+	\frac{\partial \ell}{\partial w_{ji}} &= \frac{\partial \ell}{\partial x_j} \cdot \frac{\partial x_j}{\partial w_{ji}}
 \end{align}
 In this case, the previous layer means the layer which during forwards-propagation would be calculated immediately before the layer in which unit $j$ is.
 Again, due to the use of the chain rule, the previous value calculated in \eqref{eq:loss-2} can be used here.
@@ -90,11 +122,11 @@ This gives us the contribution of the weight $w_{ji}$ on the error and, by multi
 
 The error contribution of the output of unit $i$ via a single successor unit $j$ can also similarly be calculated using the value from \eqref{eq:loss-2}.
 \begin{align}\label{eq:loss-4}
-	\frac{\partial \text{loss}}{\partial y_i} &= \frac{\partial \text{loss}}{\partial x_j} \cdot w_{ji}
+	\frac{\partial \ell}{\partial y_i} &= \frac{\partial \ell}{\partial x_j} \cdot w_{ji}
 \end{align}
 Since unit $i$ is connected to multiple successor units, its value is a summation of its output contribution via all units $j \in J$, where $J$ is the set of all units in successive layers that $i$ is connected to.
 \begin{align}
-	\frac{\partial \text{loss}}{\partial y_i} &= \sum_{j \in J} \frac{\partial \text{loss}}{\partial x_j} \cdot w_{ji}
+	\frac{\partial \ell}{\partial y_i} &= \sum_{j \in J} \frac{\partial \ell}{\partial x_j} \cdot w_{ji}
 \end{align}
 This calculation can be done in parallel, thanks to parallel computing architecture, completing to gradient calculations for the penultimate layer.
 This procedure is then repeated for all layers, each time using the previously computed values to allow for efficient computation.
