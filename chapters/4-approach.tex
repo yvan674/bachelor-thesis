@@ -1,11 +1,11 @@
 \chapter{Approach}\label{chap:approach}
-To semantically segment urban scenes and extract predictions for curbs and curb cuts, we proposed to use a deep neural network based on the DeepLab v3+ architecture with a loss function inspired by "U-Net: Convolutional Networks for Biomedical Image Segmentation" by Olaf Ronneberger et al. \cite{unet}.
+To semantically segment urban scenes and extract predictions for curbs and curb cuts, we proposed to use a deep neural network based on the DeepLab v3+ architecture with a loss function inspired by "U-Net: Convolutional Networks for Biomedical Image Segmentation" by Olaf Ronneberger et al.~\cite{unet}.
 In this chapter, the architecture used and an explanation of our loss function will be discussed.
 
 \section{Architecture Selection} \label{section:approach-architectureselection}
 Relative to the entire image, curb and curb cut classes make up a relatively small proportion of the image, making up 0.986\% and 0.196\% of images on average respectively.
 As such, four networks with good known performance for urban scene segmentation were chosen and evaluated for their performance classifying curbs and curb cuts.
-We experimented with ENet, described in the paper "ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation" \cite{enet}; GoogLeNet ,described in the paper "Going Deeper with Convolutions" \cite{googlenet}; FCN16s, described in "Fully Convolutional Networks for Semantic Segmentation" \cite{fcn}; and DeepLab v3+, described in the paper "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation" \cite{deeplab}.
+We experimented with ENet, described in the paper "ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation"~\cite{enet}; GoogLeNet ,described in the paper "Going Deeper with Convolutions"~\cite{googlenet}; FCN16s, described in "Fully Convolutional Networks for Semantic Segmentation"~\cite{fcn}; and DeepLab v3+, described in the paper "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation"~\cite{deeplab}.
 To evaluate which network would have the most potential, we trained each network on a small subset of the whole dataset to find which networks would converge the fastest given a certain budget.
 This was done to compare how each network would perform classifying curbs and curb cuts.
 
@@ -32,7 +32,7 @@ We then used a weighted cross entropy loss function.
 The weights were chosen by taking the normalized inverse of the average proportion other, curb, and curb cut classes in the dataset.
 This provided better results, but was still not producing the results that we wanted \todo{make this sound more formal and include image}.
 
-Using the assumption that all curbs and curb cuts must be located along the perimeter of roads, we used a loss function inspired by the paper "U-Net: Convolutional Networks for Biomedical Image Segmentation" which we call Masked Cross Entropy (MCE) and can be seen in \eqref{eq:mce} \cite{unet}.
+Using the assumption that all curbs and curb cuts must be located along the perimeter of roads, we used a loss function inspired by the paper "U-Net: Convolutional Networks for Biomedical Image Segmentation" which we call Masked Cross Entropy (MCE) and can be seen in \eqref{eq:mce}~\cite{unet}.
 The weighted cross entropy loss function was modified to penalize according to the given weights when labeling within a certain border around road classes, which we call the mask $M$.
 We define road classes $\text{class}_{\text{road}}$ as all classes which can reasonably be expected to be found on roads, including road, road markings, potholes, etc.
 This mask was calculated using a binary dilation on a full $b \times b$ matrix $B$ where $b$ is $0.03 \times \text{image}_{width}$ on the road class, then subtracted by the road class itself.

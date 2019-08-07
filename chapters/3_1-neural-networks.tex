@@ -1,45 +1,47 @@
 \section{Artificial Neural Networks}
-Artificial neural networks are a computing system inspired by biological neurons. Neural networks are comprised of neurons which are capable of taking any number of numerical inputs and outputs a numerical value. Mathematically, a single neuron is a time dependent function.
-The function of a neuron $j$ receiving input $p_j(t)$ and producing output $o_j(t)$ is composed of the activation $a_j(t)$, potentially a threshold $\Theta_j$, an activation function $f$ that returns the activation at time $t + 1$, and an output function $f_{out}$.
-The activation $a_j(t)$ can also be considered the neuron's state and is dependent on the time parameter $t$.
-The threshold $\Theta_j$, if it exists, is fixed unless a learning function changes it.
-The activation function $f$ calculates $a_j(t + 1)$ given $a_j(t)$, $\Theta_j$, and the network input $p_j(t)$ and can be defined as:
+Artificial neural networks are a computing system inspired by biological neurons. Neural networks are comprised of neurons which are capable of taking any number of numerical inputs and outputs a numerical value. Mathematically, a single neuron is simply some function.
+The function of a neuron $j$ receiving input $x_j$ and producing output $y_j$ is composed of the activation $a_j$, an activation function $f_a$ which returns the activation, and an output function $f_{o}$.
+The activation $a_j$ can also be considered the neuron's state.
+The activation function $f_a$ calculates $a_j$ given the network input $x_j$ and can be defined as:
 \begin{align}
-	a_j(t + 1) &= f\left(a_j(t), \Theta_j, p_j(t)\right)
+	a_j &= f_a\left(x_j\right)
 \end{align}
-The output function $f_out$ computes $o_j(t)$ based on $a_j(t)$ and is defined as:
+The output function $f_o$ computes $y_j$ based on $a_j$ and is defined as:
 \begin{align}
-	o_j(t) &= f_out\left(a_j(t)\right)
+	x_j(t) &= f_o\left(a_j\right)
 \end{align}
-The output function is usually simply the identify function $f(x) = x$.
 Many activation functions exists and are used including the identity function and the rectified linear unit (ReLU), defined as:
 \begin{align}
-	f(x) &= 
+	f_a(x) &= 
 	\begin{cases}
 		0	& \text{for } x \leq 0\\
 		x	& \text{for } x > 0
 	\end{cases}
 \end{align}
 
-Between each neuron in the network are connections which transfer the output of neuron $i$ to neuron $j$. Each of these connections are assigned a weight and potentially a bias term and is computed by the propagation function to provide a neuron its input $p_j(t)$. This typically is defined as:
+Between each neuron in the network are connections which transfer the output of neuron $i$ to neuron $j$. Each of these connections are assigned a weight $w_{ij}$, which is computed by the learning algorithm.
+Each neuron also has a bias $w_{0j}$.
+These parameters are used to provide a neuron its input $x_j$. This is defined as:
 \begin{align}
-	p_j(t) &= \sum_{i}o_i(t)w_{ij} + w_{0j}~,~\text{where } w_{0j} \text{ is the bias, if it exists.}
+	x_j &= \sum_{i}y_i(t)w_{ij} + w_{0j}
 \end{align}
 
-Learning occurs by using an algorithm to modify the parameters of the neural network.
+Learning occurs by using an algorithm known as backpropagation to modify the parameters of the neural network.
+Further discussion on backpropagation can be found in Subsection \ref{section:background-backpropagation}.
 
-Deep neural networks are so called due to having multiple "hidden" layers between the input and output.
-These hidden layers are not visible to the end user and their values are typically never accessed directly.
+Deep neural networks are so called deep due to having multiple "hidden" layers between the input and output which are not accessed directly.
 
 \subsection{Convolutional Neural Networks}\label{section:background-cnn}
 Convolutional Neural Networks (CNNs) are a specific class of deep neural networks and have been found to perform exceptionally for image analysis, such as image classification and segmentation.
-The inspiration for CNNs come from biological processes to simulate the orgainization of the visual cortex in animals~\cite{cnnbiology}.
+The inspiration for CNNs come from biological processes to simulate the organization of the visual cortex in animals~\cite{cnnbiology}.
 Convolutional layers are the core build blocks of CNNs.
 These convolutional layers consist of a set of learnable filters which are convolved across the entire input and computing the dot products between the different entries of the filter.
 This allows the layer to activate when it detects a specific type of feature at some point in the input.\todo{convolution image}
 By using multiple convolutional layers, higher level features can be extracted and a feature map generated.
+The module responsible for extracting the feature map is commonly known as the encoder.
 
-For semantic scene segmentation applications, the convolutional layers that make up the CNN are called the feature encoder.
-The output of these convolutional layers are then fed into one or more fully connected linear layers to produce a classification of each pixel in a secene.
-These fully connected layers are called the decoder.
-The resulting classification produced is a probability of each pixel being a certain class.
+For semantic segmentation applications, the convolutional layers that make up the CNN are called the feature encoder.
+The output of these convolutional layers are then fed into one or more fully convolutional layers to produce a classification of each pixel in a scene.
+These convolutional layers work by taking the deep feature maps produced by the encoder and using deconvolutional or upsampling layers to produce a final segmentation.
+This module is known as the decoder.
+The resulting segmentation produced is a probability of each pixel being a certain class.

@@ -1,40 +1,32 @@
 \chapter{Background}\label{chap:background}
-The basis of CurbNet is semantic scene segmentation using convolutional neural networks.
-As such, it is imperative that the reader has an understanding of the principles behind semantic scene segmentation and convolutional neural networks.
-This chapter on the background of this work will discuss semantic scene segmentation, machine learning with artificial neural networks and convolutional neural networks, curb segmentation, loss functions, and network optimizers.
+The basis of CurbNet is semantic segmentation using convolutional neural networks.
+As such, it is imperative that the reader has an understanding of the principles behind semantic segmentation and convolutional neural networks.
+This chapter on the background of this work will discuss semantic segmentation, machine learning with artificial neural networks and convolutional neural networks, curb segmentation, loss functions, and network optimizers.
 
-\section{Semantic Scene Segmentation}\label{section:background-segmentation}
-Unlike image classification, which predicts what an entire scene is, semantic scene segmentation is the processing of an image and assigning class labels to each individual pixel~\cite{segmentation-medium}.
-This allows for finer details and adds the ability to locate and classify multiple objects in a scene.
-For example, the image in figure \todo{add image} has been segmented and the result is figure \todo{add segmented}.
-Each pixel of the image has been assigned an associated class, in this case, \todo{add classes segmented}
+\section{Semantic Segmentation}\label{section:background-segmentation}
+Unlike image classification, which classifies the contents of an image, semantic segmentation is the use of some algorithm to process an image and assign class labels to each individual pixel~\cite{segmentation-medium}.
+This adds the ability to locate and classify multiple objects in a given scene.
+For example, the ground truth segmentation of the street-level image in \figref{fig:background-raw} can be seen in \figref{fig:background-segmented}.
+Each pixel of the image has been assigned a class, which is represented by the different colors in the segmented image.
 This allows a computer or program to understand what objects are in the image it is shown.
 
-By segmenting an image in this way, the program can interpret the scene or its environment semantically similarly to the way a human might.
+\input{figures/background/segmentation}
+
+By segmenting an image in this way, the program can interpret the or its environment semantically.
 For example, by receiving the segmented image, a program can identify that there are line markings on the road and that there is a vehicle in front of it.
-The segmentation of images in this way is essential in many robotic implementations as it allows further higher level processing of the scene.
+The segmentation of images in this way is essential in many robotic applications as it allows further higher level processing of the scene.
 
-In our case, being able to segment and identify curbs in a scene would allow Obelix to map the location of the surrounding curbs and curb cuts, allowing for the safe traversal from sidewalk to street level via curb cuts.
+Towards the goal of this work, the segmentation of curbs and curb cuts in a scene would allow Obelix to more accurately find a path allowing for the safe traversal from sidewalk to street level via curb cuts.
 
-Over the past few years, state-of-the-art methods in image segmentation have relied entirely on deep learning using CNNs to achieve better results.
+In recent years, state-of-the-art methods in image segmentation have relied entirely on deep learning using CNNs to achieve better results.
 
 \input{chapters/3_1-neural-networks}
 
 \section{Curbs and Curb Cuts}\label{section:background-curbs}
 Curbs are the edges of roads, or the separator between the road and some other area, usually a pedestrian sidewalk, and are usually stone or concrete.
 Curb cuts are "cuts" in the curb that allow a pedestrian sidewalk to have a gentle slope down to street level.
-Originally, these cuts were made to allow accessibility access, especially for those requiring wheelchairs, as to a wheelchair user, a curb is as good as a wall in terms of traversibility, as was discussed in the article "Curb Cuts" by Cynthia Gorney and Delaney Hall. These curb cuts first started appearing fifty years ago from the efforts of activist Ed Roberts and his push to make city streets more accessible.
+Originally, these cuts were made to allow accessibility access, especially for those requiring wheelchairs, as to a wheelchair user, curbs represent a significant barrier in terms of traversability, as was discussed in the article "Curb Cuts" by Cynthia Gorney and Delaney Hall. These curb cuts first started appearing fifty years ago from the efforts of activist Ed Roberts and his push to make city streets more accessible.
 \todo{Include picture of a curb cut}
-
-\section{Curb Segmentation}\label{section:background-curbsegmentation}
-A discussion of the state-of-the-art of curb and curb cut segmentation would be moot, as there is no work we could find specifically discussing this topic.
-
-There are quite a few papers regarding the identification and localization of curbs using LIDAR sensors, but none that specifically tackle the problem of curb cuts and none that use computer vision approaches.
-The challenge for curb segmentation is the relatively small size of curbs in relation to everything else in the scene.
-As such, there is a heavy class imbalance.
-With such an unbalanced dataset, it is possible for a neural network to simply optimize towards classifying no curbs at all, since this would produce a reasonably low loss.
-
-Furthermore, the segmentation and differentiation between curbs and curb cuts using a single image with no depth information is quite difficult, as visually, curbs and curb cuts can seem very similar.
 
 \section{Loss Functions}\label{section:background-loss}
 The loss function $l$ maps the output of the neural network $\hat{y}$ and the target $y$ onto a real number and represents the "cost" of an output.
@@ -57,24 +49,24 @@ We do this to counteract the class imbalance caused by how small spatially the c
 \section{Optimizers}\label{section:background-optimizers}
 During training, network parameters must be updated to minimize the loss function at each iteration.
 This is done by the optimizer.
-The optimizer updates the network parameters in such a way as to minimize the loss function \cite{optimizer-intro}.
+The optimizer updates the network parameters in such a way as to minimize the loss function~\cite{optimizer-intro}.
 
 Gradient Descent is one of the oldest loss functions used.
 It works by calculating what a small change in each network parameter would do to the loss function, i.e. determines the optimal gradient for the current iteration.
 It then adjusts the network parameters according to this gradient.
 This process is repeated at each iteration to further minimize the loss function.
 This process can be time consuming, especially with larger datasets.
-Stochastic Gradient Descent (SGD) is a more commonly used variant of gradient descent and works similarly, but working only on randomly selected batches of the training data at each iteration \cite{optimizer-intro}.
+Stochastic Gradient Descent (SGD) is a more commonly used variant of gradient descent and works similarly, but working only on randomly selected batches of the training data at each iteration~\cite{optimizer-intro}.
 
 Adaptive Moment Estimation (Adam) is another loss function that is commonly used and the one implemented in CurbNet.
-It combines concepts from Adaptive Gradient Algorithm (AdaGrad), which has per-parameter learning rates, and Root Mean Square Propagation (RMSProp), whose learning rates are adapted based on the average of the magnitude of recent gradients \cite{adam}.
+It combines concepts from Adaptive Gradient Algorithm (AdaGrad), which has per-parameter learning rates, and Root Mean Square Propagation (RMSProp), whose learning rates are adapted based on the average of the magnitude of recent gradients~\cite{adam}.
 Adam utilizes the concept of momentum, which incorporates previous gradients into the current one.
 It does this by calculating an exponential moving average and the square of previous gradients and using these to determine the next gradient.
-The original paper that proposed Adam, titled "Adam: A method for stochastic optimization" by Diederik Kingma and Jimmy Ba, also shows that Adam allows a network to converge faster than competing optimizers, including SGD \cite{adam}.
+The original paper that proposed Adam, titled "Adam: A method for stochastic optimization" by Diederik Kingma and Jimmy Ba, also shows that Adam allows a network to converge faster than competing optimizers, including SGD~\cite{adam}.
 
-\section{Back-propagation}\label{section:background-backpropagation}
-Back-propagation is a learning procedure used in artificial neural networks to adjust network weights and produce internal representations "important features in the task domain", first described the David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams in their paper "Learning representations by back-propagating errors" \cite{backprop}.
-Back-propagation efficiently and repeatedly adjusts the network weights to minimize the network error, which is calculated by the loss function.
+\section{backpropagation}\label{section:background-backpropagation}
+backpropagation is a learning procedure used in artificial neural networks to adjust network weights and produce internal representations "important features in the task domain", first described the David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams in their paper "Learning representations by back-propagating errors"~\cite{backprop}.
+backpropagation efficiently and repeatedly adjusts the network weights to minimize the network error, which is calculated by the loss function.
 
 Calculating the network weights is done layer by layer, starting with the final output layer.
 The effect the output unit has on the loss is calculated first as
@@ -107,7 +99,7 @@ Since unit $i$ is connected to multiple successor units, its value is a summatio
 This calculation can be done in parallel, thanks to parallel computing architecture, completing to gradient calculations for the penultimate layer.
 This procedure is then repeated for all layers, each time using the previously computed values to allow for efficient computation.
 
-The main drawback of back-propagation is that it may approach local minima which are not the global minimum, at which point the network can potentially get stuck and become unable to improve.
+The main drawback of backpropagation is that it may approach local minima which are not the global minimum, at which point the network can potentially get stuck and become unable to improve.
 The addition of more units, thus increasing the weight dimensionality, can increase the number of paths out of local minima.
 Futhermore, the authors of the previously mentioned paper have also concluded that this is not a plausible model for how learning works in biological brains and, thus, that looking into other biologically based procedures may be useful.
 
@@ -122,4 +114,4 @@ The binary dilation of $A$ by $B$ is then defined as:
 	A \oplus B &= \bigcup_{b \in B}A_b
 \end{align}
 where $A_b$ is the translation of $A$ by $b$.
-This can be seen as extending the area of the binary image $A$ by locus of the points covered by $B$ given that $B$ has a center on the origin \cite{morphology}.
+This can be seen as extending the area of the binary image $A$ by locus of the points covered by $B$ given that $B$ has a center on the origin~\cite{morphology}.
