@@ -9,7 +9,7 @@ We experimented with ENet, described in the paper "ENet: A Deep Neural Network A
 To evaluate which network would have the most potential, we trained each network on a small subset of the whole dataset to find which networks would converge the fastest given a certain budget.
 This was done to compare how each network would perform classifying curbs and curb cuts.
 
-We came to use the DeepLab v3+ architecture after running these experiments due to significantly outperforming the other networks, as seen in \todo{make table}.
+We came to use the DeepLab v3+ architecture after running these experiments due to significantly outperforming the other networks, as seen in \todo{make table}. A further discussion of the results can be found in section \ref{section:experiments-evaluationmethod}.
 
 \subsection{Modifications to DeepLab v3+}\label{section:approach-extendingdeeplab}
 Given that we are working with the assumption of a camera with a constant attitude, we can also make the assumption that curbs will be more likely towards the bottom and sides of an image.
@@ -19,7 +19,7 @@ The initial convolutional layer was also modified to accept five channels as inp
 
 \subsection{Network Architecture}\label{section:approach-networkarchitecture}
 We propose to apply the DeepLab v3+ architecture to our stated problem of curb and curb cut classification with the modifications described in subsection \ref{section:approach-extendingdeeplab}.
-The architecture itself is given in Figures \todo{ref figures} with further descriptions in Tables \ref{tab:drn}-\ref{tab:decoder}.
+The architecture itself is given in Figures \todo{ref figures} with further descriptions in Tables \ref{tab:drn}-\ref{tab:decoder}\footnote{The full implementation written using the PyTorch framework can be found at \url{github.com/yvan674/CurbNet}}.
 
 \input{tables/drn}
 \input{tables/bottleneck}

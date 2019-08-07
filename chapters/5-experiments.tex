@@ -1,13 +1,36 @@
 \chapter{Experiments}\label{chap:experiments}
-
+A series of experiments were carried out to determine the performance of the network in its stated goal of classifying curbs and curb cuts. To this end, the network was tested on the Mapillary Vistas dataset \cite{mapillary} and its hyperparameters optimized using the Bayesian optimization with hyperband (BOHB) procedure from the AutoML group at University of Freiburg \cite{bohb}
 
 \section{Dataset} \label{section:experiments-dataset}
+The Mapillary Vistas dataset was chosen for this task as it was one of the few street-level dataset that included ground truth segmentations of both curbs and curb cuts.
+This dataset contains images from all around the world and includes images captured from different imaging devices including mobile phones, action cameras, and professional imaging solutions.
+These images are captured during various weather, seasonal, and daylight conditions.
+As such, the dataset provides a challenging level of diversity.
 
-\section{Hyper parameters} \label{section:experiments-hyperparameters}
-Include graph
+With such a diverse dataset, the images must first be preprocessed.
+We process all the images to conform to a 4:3 size ratio, eliminate images without images of curbs or curb cuts, and extract only road, curb, and curb cut classes. 
+
+\section{Hyperparameters} \label{section:experiments-hyperparameters}
+Hyperparameter tuning was done by using BOHB.
+\extend{include graph and discussion}
 
 \section{Training Pipeline} \label{section:experiments-trainingpipeline}
+%Briefly explain how data is preprocessed
+%Explain use of GUI to train in person and command line to train over ssh
+%Explain how the trainer and was made modular so networks, optimizers, and datasets could be swapped easily without much reconfiguration needed simply using cmd line arguments when running the main program
 
 \section{Evaluation Method} \label{section:experiments-evaluationmethod}
+%○ Focus on this
+%○ Accuracy measurement i.e. use of IoU
+%○ Explain why the loss was chosen and why it is a valid choice
+%○ Explain why the architecture was chosen and what led to this decision
+%	§ State of the art
+%	§ Self testing
+%	§ Excels at finding smaller objects further away
+%		□ Very important for curbs which may only be a few pixels wide
+%○ What was done to get the best possible result
+%○ How was the network improved over time
+%	§ Where the network fails and how it was overcome
+%○ Discussion of loss used over time
 
 \section{Results} \label{section:experiments-results}
