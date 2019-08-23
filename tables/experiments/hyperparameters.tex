@@ -1,0 +1,16 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[]
+\begin{tabular}{@{}llp{3.9cm}p{3cm}@{}}
+\toprule
+Parameter Name    & Parameter Type & Range                                            & Comments                               \\ \midrule
+Learning rate     & Float          & $\left[1 \times 10^{-5}, 1 \times 10^{-2}\right]$& On a logarithmic scale                \\
+Optimizer         & Categorical    & Adam or SGD                                      &                                      \\
+SGD momentum      & Float          & $\left[0, 0.99\right]$                           & Only active when the optimizer is SGD\\
+Adam epsilon      & Float          & $\left[1 \times 10^{-2}, 1\right]$               & Only active when the optimizer is Adam\\
+Loss weight ratio & Float          & $\left[2,6\right]$                               &                                       \\
+Loss criterion    & Categorical    & Weighted cross entropy or masked cross entropy   &                                      \\ \bottomrule
+\end{tabular}
+\caption[Hyperparameter Details]{Table of hyperparameters and their values that were optimized for using Bayesian Optimization and HyperBand.}
+\label{tab:hyperparameters}
+\end{table}

@@ -1,7 +1,7 @@
 %% This BibTeX bibliography file was created using BibDesk.
 %% http://bibdesk.sourceforge.net/
 
-%% Created for Yvan Putra Satyawan at 2019-08-06 14:59:39 +0300 
+%% Created for Yvan Putra Satyawan at 2019-08-21 17:31:50 +0200 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
@@ -9,12 +9,11 @@
 
 
 @misc{jannik,
-	Author = {Yvan Putra Satyawan},
 	Date-Added = {2019-08-06 14:58:57 +0300},
-	Date-Modified = {2019-08-06 14:59:37 +0300},
-	Howpublished = {Interview.},
+	Date-Modified = {2019-08-21 17:18:36 +0200},
+	Howpublished = {Interview},
 	Month = {July},
-	Title = {Interview with Jannik Z{\"u}rn},
+	Title = {Interview with {Jannik Z{\"u}rn}},
 	Year = {2019}}
 
 @article{bayesiantds,
@@ -40,9 +39,9 @@
 @article{optimizer-intro,
 	Author = {Daniel Sabinasz},
 	Date-Added = {2019-07-01 12:14:43 +0200},
-	Date-Modified = {2019-07-01 12:15:58 +0200},
+	Date-Modified = {2019-08-21 17:26:13 +0200},
 	Journal = {deep ideas},
-	Title = {Deep Learning From Scratch IV: Gradient Descent and Backpropagation},
+	Title = {Deep Learning From Scratch {IV}: Gradient Descent and Backpropagation},
 	Year = {2017}}
 
 @article{99pi,
@@ -103,12 +102,14 @@
 	Year = {2009},
 	Bdsk-Url-1 = {http://europa.informatik.uni-freiburg.de}}
 
-@article{adam,
+@inproceedings{adam,
 	Author = {Kingma, Diederik and Ba, Jimmy},
-	Date-Modified = {2019-07-01 12:25:27 +0200},
-	Journal = {arXiv preprint arXiv:1412.6980},
-	Title = {Adam: A method for stochastic optimization},
-	Year = {2014}}
+	Booktitle = {ICLR 2015},
+	Date-Modified = {2019-08-21 17:06:07 +0200},
+	Organization = {International Conference on Learning Representations (ICLR)},
+	Pages = {13},
+	Title = {Adam: A Method For Stochastic Optimization},
+	Year = {2015}}
 
 @inproceedings{fcn,
 	Author = {Long, Jonathan and Shelhamer, Evan and Darrell, Trevor},
@@ -124,26 +125,28 @@
 	Title = {Deep Residual Learning for Image Recognition},
 	Year = {2016}}
 
-@article{vgg,
-	Author = {Simonyan, Karen and Zisserman, Andrew},
-	Journal = {arXiv 1409.1556},
-	Month = {September},
-	Title = {Very Deep Convolutional Networks for Large-Scale Image Recognition},
-	Year = {2014}}
-
-@article{pspnet,
-	Archiveprefix = {arXiv},
-	Author = {Hengshuang Zhao and Jianping Shi and Xiaojuan Qi and Xiaogang Wang and Jiaya Jia},
+@inproceedings{vgg,
+	Author = {Karen Simonyan and Andrew Zisserman},
 	Bibsource = {dblp computer science bibliography, https://dblp.org},
-	Biburl = {https://dblp.org/rec/bib/journals/corr/ZhaoSQWJ16},
-	Eprint = {1612.01105},
-	Journal = {CoRR},
-	Timestamp = {Mon, 13 Aug 2018 16:47:16 +0200},
-	Title = {Pyramid Scene Parsing Network},
-	Url = {http://arxiv.org/abs/1612.01105},
-	Volume = {abs/1612.01105},
-	Year = {2016},
-	Bdsk-Url-1 = {http://arxiv.org/abs/1612.01105}}
+	Biburl = {https://dblp.org/rec/bib/journals/corr/SimonyanZ14a},
+	Booktitle = {3rd International Conference on Learning Representations, {ICLR} 2015, San Diego, CA, USA, May 7-9, 2015, Conference Track Proceedings},
+	Crossref = {DBLP:conf/iclr/2015},
+	Date-Modified = {2019-08-21 17:11:51 +0200},
+	Timestamp = {Wed, 17 Jul 2019 10:40:54 +0200},
+	Title = {Very Deep Convolutional Networks for Large-Scale Image Recognition},
+	Url = {http://arxiv.org/abs/1409.1556},
+	Year = {2015},
+	Bdsk-Url-1 = {http://arxiv.org/abs/1409.1556}}
+
+@proceedings{DBLP:conf/iclr/2015,
+	Bibsource = {dblp computer science bibliography, https://dblp.org},
+	Biburl = {https://dblp.org/rec/bib/conf/iclr/2015},
+	Editor = {Yoshua Bengio and Yann LeCun},
+	Timestamp = {Wed, 17 Jul 2019 10:40:54 +0200},
+	Title = {3rd International Conference on Learning Representations, {ICLR} 2015, San Diego, CA, USA, May 7-9, 2015, Conference Track Proceedings},
+	Url = {https://iclr.cc/archive/www/doku.php\%3Fid=iclr2015:accepted-main.html},
+	Year = {2015},
+	Bdsk-Url-1 = {https://iclr.cc/archive/www/doku.php%5C%3Fid=iclr2015:accepted-main.html}}
 
 @inproceedings{ethobelix,
 	Author = {Maye, J{\'e}r{\^o}me and Kaestner, Ralf and Siegwart, Roland},
@@ -300,10 +303,18 @@
 	Year = {2015}}
 
 @article{enet,
-	Author = {Paszke, Adam and Chaurasia, Abhishek and Kim, Sangpil and Culurciello, Eugenio},
-	Month = {June},
-	Title = {ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation},
-	Year = {2016}}
+	Archiveprefix = {arXiv},
+	Author = {Adam Paszke and Abhishek Chaurasia and Sangpil Kim and Eugenio Culurciello},
+	Bibsource = {dblp computer science bibliography, https://dblp.org},
+	Biburl = {https://dblp.org/rec/bib/journals/corr/PaszkeCKC16},
+	Eprint = {1606.02147},
+	Journal = {CoRR},
+	Timestamp = {Mon, 13 Aug 2018 16:47:37 +0200},
+	Title = {ENet: {A} Deep Neural Network Architecture for Real-Time Semantic Segmentation},
+	Url = {http://arxiv.org/abs/1606.02147},
+	Volume = {abs/1606.02147},
+	Year = {2016},
+	Bdsk-Url-1 = {http://arxiv.org/abs/1606.02147}}
 
 @inproceedings{googlenet,
 	Author = {Christian Szegedy and Wei Liu and Yangqing Jia and Pierre Sermanet and Scott Reed and Dragomir Anguelov and Dumitru Erhan and Vincent Vanhoucke and Andrew Rabinovich},
@@ -321,11 +332,10 @@
 	Title = {Image Analysis and Mathematical Morphology},
 	Year = {1983}}
 
-@InProceedings{mapillary,
-title=    {The Mapillary Vistas Dataset for Semantic Understanding of Street Scenes},
-author=   {Neuhold, Gerhard and Ollmann, Tobias and Rota Bul\`o, Samuel and Kontschieder, Peter},
-booktitle={International Conference on Computer Vision (ICCV)},
-year=     {2017},
-url=      {https://www.mapillary.com/dataset/vistas}
-}
-
+@inproceedings{mapillary,
+	Author = {Neuhold, Gerhard and Ollmann, Tobias and Rota Bul\`o, Samuel and Kontschieder, Peter},
+	Booktitle = {International Conference on Computer Vision (ICCV)},
+	Title = {The Mapillary Vistas Dataset for Semantic Understanding of Street Scenes},
+	Url = {https://www.mapillary.com/dataset/vistas},
+	Year = {2017},
+	Bdsk-Url-1 = {https://www.mapillary.com/dataset/vistas}}

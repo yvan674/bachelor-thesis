@@ -1,1 +1,17 @@
-\chapter{Conclusion}\label{chap:conclusion}
+\chapter{Conclusion and Future Work}\label{chap:conclusion}
+In this work we propose CurbNet, a deep learning model that is capable of segmenting curbs and curb cuts in street-level imagery.
+CurbNet uses DeepLab v3+ to perform semantic segmentation on images and trains using a modified loss function known as masked cross entropy loss.
+
+Training and validation was performed on the Mapillary dataset \cite{mapillary}.
+We attempted to improve performance by introducing pixel coordinates to the input pixels, but this resulted in negligible gains and was thus omitted from the final model.
+Hyperparameter optimization was performed using the bayesian optimization and hyperband framework developed by the AutoML group at the University of Freiburg.
+
+To evaluate our model, we used mean intersection over union and used a validation subset of the Mapillary dataset.
+Our network was able to perform with \todo{value}\% mean IoU on this validation set.
+It is capable of segmenting curbs and curb cuts even when they are located a distance and are small relative to the rest of the image.
+Failure cases typically occur at road edges which have a different material, but are not elevated, and with road markings which are located very close to the road edge.
+
+We propose that future work should be done with additional depth information.
+Including this information would reduce the number of ambiguous cases where a road edge is visually similar to a curb.
+Furthermore, we propose fully integrating our network with the pathfinder used by Obelix to fulfill the original motivation behind this work.
+By fully integrating CurbNet into the its pathfinder pipeline, we hope that we can increase Obelix's capabilities.

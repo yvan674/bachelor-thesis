@@ -1,0 +1,84 @@
+\definecolor{cred}{RGB}{155,47,47}
+\definecolor{cblue}{RGB}{40,79,168}
+\definecolor{cgreen}{RGB}{78,131,65}
+
+% Elements of matrix 1
+\def\elementsa{{2, 3, 3, 2, 2,
+				7, 8, 5, 9, 0,
+				2, 4, 7, 5, 4,
+				4, 4, 0, 0, 6,
+				9, 6, 5, 9, 3}}
+% Elements of the convolution
+\def\elementsb{{0, 1, 0, 
+				1, 0, 1, 
+				0, 1, 0}}
+
+\def\elementsc{{19, 27, 12,
+				21, 14, 20,
+				14, 16, 20}}
+\begin{figure}[t]
+	\centering
+	\resizebox{0.7\textwidth}{!}{
+		\begin{tikzpicture}
+			[x={(0.866cm,0.5cm)}, y={(-0.866cm,0.5cm)}, z={(0cm,1cm)}, scale=0.8]			
+			% Matrix A
+			\begin{scope}[canvas is xz plane at y=0,transform shape]
+				
+				\foreach \ii [count = \xi] in {1,2,3,4,5}{
+		    		\foreach \jj  [count = \yi]in {1,2,3,4,5}{
+		    			\pgfmathsetmacro{\nn}{int(\xi+5*\yi-5)}
+						\node[cred,draw,minimum size=1cm] (n\nn-1) at (\ii,-\jj) {
+							\pgfmathparse{\elementsa[(5*(\yi-1))+(\xi-1)]}\pgfmathresult
+						};
+					}
+				}
+				\node[cred,draw,minimum size=1cm,above=of n1-1.west,anchor=west] {matrix $A$};  % Matrix Label
+			\end{scope}
+			
+			% Matrix B
+			\begin{scope}[canvas is xz plane at y=-5.5,transform shape]
+				\foreach \ii [count = \xi] in {1,2,3}{
+		   			\foreach \jj  [count = \yi]in {1,2,3}{
+				     	\pgfmathsetmacro{\nn}{int(\xi+3*\yi-3)}
+				     	\pgfmathsetmacro{\val}{}]
+						\node[cblue,draw,minimum size=1cm] (n\nn-2) at (\ii,-\jj) {
+							\pgfmathparse{\elementsb[(3*(\yi-1))+(\xi-1)]}\pgfmathresult
+						};
+					}
+				}
+				\node[cblue,draw,minimum size=1cm,above=of n1-2.west,anchor=west] {matrix $B$};  % Matrix Label
+			\end{scope} 
+			
+			% Matrix C
+			\begin{scope}[canvas is xz plane at y=-9,transform shape]
+				\foreach \ii [count = \xi] in {1,2,3}{
+		   			\foreach \jj  [count = \yi]in {1,2,3}{
+				    	\pgfmathsetmacro{\nn}{int(\xi+3*\yi-3)}
+						\node[cgreen,draw,minimum size=1cm] (n\nn-3) at (\ii,-\jj) {
+							\pgfmathparse{\elementsc[(3*(\yi-1))+(\xi-1)]}\pgfmathresult
+						};
+					}
+				}
+				\node[cgreen,draw,minimum size=1cm,above=of n1-3.west,anchor=west] {matrix $C$};  % Matrix Label
+			\end{scope} 
+			
+			% Top of box
+			\draw[fill=red!50,opacity=0.3] (n3-1.north east) -- (n3-2.north east) --(n1-3.north east)
+			--(n1-3.north west)-- (n1-2.north west) --  (n1-1.north west)  ;
+			
+			% Bottom of box
+			\draw[fill=red!50,opacity=0.3] (n13-1.south east) -- (n9-2.south east) --(n1-3.south east)
+			--(n1-3.south west)-- (n7-2.south west)-- (n11-1.south west)  ;    
+
+			% Right side of box			
+			\draw[fill=red!50,opacity=0.3] (n3-1.north east) -- (n3-2.north east) --(n1-3.north east)
+			--(n1-3.south east)-- (n9-2.south east)-- (n13-1.south east)  ;
+
+			% Left side of box			
+			\draw[fill=red!50,opacity=0.3] (n1-1.north west) -- (n1-2.north west) --(n1-3.north west)
+			--(n1-3.south west)-- (n7-2.south west)-- (n11-1.south west)  ;      
+		
+		\end{tikzpicture}
+	}
+	\caption[Convolution operation]{An example of a how a convolution on matrix $A$ and matrix $B$ would result in matrix $C$.}
+\end{figure}

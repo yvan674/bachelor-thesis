@@ -1,5 +1,9 @@
 \section{Artificial Neural Networks}
-Artificial neural networks are a computing system inspired by biological neurons. Neural networks are comprised of neurons which are capable of taking any number of numerical inputs and outputs a numerical value. Mathematically, a single neuron is simply some function.
+Artificial neural networks are a computing system inspired by biological neurons. Neural networks are comprised of neurons which are capable of taking any number of numerical inputs and outputs a numerical value.
+
+\input{figures/background/neural-net.tex}
+
+Mathematically, a single neuron is a function.
 The function of a neuron $j$ receiving input $x_j$ and producing output $y_j$ is composed of the activation $a_j$, an activation function $f_a$ which returns the activation, and an output function $f_{o}$.
 The activation $a_j$ can also be considered the neuron's state.
 The activation function $f_a$ calculates $a_j$ given the network input $x_j$ and can be defined as:
@@ -8,7 +12,7 @@ The activation function $f_a$ calculates $a_j$ given the network input $x_j$ and
 \end{align}
 The output function $f_o$ computes $y_j$ based on $a_j$ and is defined as:
 \begin{align}
-	x_j(t) &= f_o\left(a_j\right)
+	x_j &= f_o\left(a_j\right)
 \end{align}
 Many activation functions exists and are used including the identity function and the rectified linear unit (ReLU), defined as:
 \begin{align}
@@ -23,11 +27,13 @@ Between each neuron in the network are connections which transfer the output of 
 Each neuron also has a bias $w_{0j}$.
 These parameters are used to provide a neuron its input $x_j$. This is defined as:
 \begin{align}
-	x_j &= \sum_{i}y_i(t)w_{ij} + w_{0j}
+	x_j &= \sum_{i}y_iw_{ij} + w_{0j}
 \end{align}
 
+\figref{fig:background-neuralnet} shows a visualization of the interactions between multiple neurons.
+
 Learning occurs by using an algorithm known as backpropagation to modify the parameters of the neural network.
-Further discussion on backpropagation can be found in Subsection \ref{section:background-backpropagation}.
+Further discussion on backpropagation can be found in Section \ref{section:background-backpropagation}.
 
 Deep neural networks are so called deep due to having multiple "hidden" layers between the input and output which are not accessed directly.
 
@@ -36,12 +42,13 @@ Convolutional Neural Networks (CNNs) are a specific class of deep neural network
 The inspiration for CNNs come from biological processes to simulate the organization of the visual cortex in animals~\cite{cnnbiology}.
 Convolutional layers are the core build blocks of CNNs.
 These convolutional layers consist of a set of learnable filters which are convolved across the entire input and computing the dot products between the different entries of the filter.
-This allows the layer to activate when it detects a specific type of feature at some point in the input.\todo{convolution image}
+\input{figures/background/convolution}
 By using multiple convolutional layers, higher level features can be extracted and a feature map generated.
 The module responsible for extracting the feature map is commonly known as the encoder.
 
-For semantic segmentation applications, the convolutional layers that make up the CNN are called the feature encoder.
-The output of these convolutional layers are then fed into one or more fully convolutional layers to produce a classification of each pixel in a scene.
-These convolutional layers work by taking the deep feature maps produced by the encoder and using deconvolutional or upsampling layers to produce a final segmentation.
+The convolutional layers that make up the CNN are called the feature encoder.
+The output of these convolutional layers are then fed into a module with one or more fully convolutional layers to produce a classification of each pixel in a scene.
+These convolutional layers work by taking the deep feature maps produced by the encoder and using deconvolutional or upsampling layers to produce a log-likelihood vector for each pixel.
 This module is known as the decoder.
-The resulting segmentation produced is a probability of each pixel being a certain class.
+The resulting vector produced is a probability of each pixel being a certain class.
+Applying an argmax operation on this vector produces a segmentation of the input image.

@@ -1,0 +1,15 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+% \usepackage{graphicx}
+\begin{table}[b]
+	\centering
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Network     & mean IoU \\ \midrule
+		DeepLab v3+ & 30.8\%   \\
+		FCN16s      & 19.9\%   \\
+		GoogLeNet   & 25.1\%   \\ \bottomrule
+	\end{tabular}
+	\caption[Network Comparison Results]{Results of running the different networks on a subset of the main dataset after one thousand iterations.}
+	\label{tab:network-comparison}
+\end{table}

@@ -3,39 +3,24 @@ To semantically segment urban scenes and extract predictions for curbs and curb 
 In this chapter, the architecture used and an explanation of our loss function will be discussed.
 
 \section{Architecture Selection} \label{section:approach-architectureselection}
-Relative to the entire image, curb and curb cut classes make up a relatively small proportion of the image, making up 0.986\% and 0.196\% of images on average respectively.
-As such, four networks with good known performance for urban scene segmentation were chosen and evaluated for their performance classifying curbs and curb cuts.
-We experimented with ENet, described in the paper "ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation"~\cite{enet}; GoogLeNet ,described in the paper "Going Deeper with Convolutions"~\cite{googlenet}; FCN16s, described in "Fully Convolutional Networks for Semantic Segmentation"~\cite{fcn}; and DeepLab v3+, described in the paper "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation"~\cite{deeplab}.
-To evaluate which network would have the most potential, we trained each network on a small subset of the whole dataset to find which networks would converge the fastest given a certain budget.
-This was done to compare how each network would perform classifying curbs and curb cuts.
-
-We came to use the DeepLab v3+ architecture after running these experiments due to significantly outperforming the other networks, as seen in \todo{make table}. A further discussion of the results can be found in section \ref{section:experiments-evaluationmethod}.
-
-\subsection{Modifications to DeepLab v3+}\label{section:approach-extendingdeeplab}
-Given that we are working with the assumption of a camera with a constant attitude, we can also make the assumption that curbs will be more likely towards the bottom and sides of an image.
-Therefore, we modified DeepLab v3+ by adding a preprocessing step which turns the input image into a five-dimensional tensor, with the fourth and fith dimensions being the x and y coordinates of the pixel, respectively.
-The initial convolutional layer was also modified to accept five channels as input.
-\extend{add image of example tensor input showing what each channel is}
+We came to use the DeepLab v3+ architecture after running these experiments due to significantly outperforming the other networks. A further discussion of the results can be found in section \ref{section:experiments-networkevaluation}.
 
 \subsection{Network Architecture}\label{section:approach-networkarchitecture}
-We propose to apply the DeepLab v3+ architecture to our stated problem of curb and curb cut classification with the modifications described in subsection \ref{section:approach-extendingdeeplab}.
-The architecture itself is given in Figures \todo{ref figures} with further descriptions in Tables \ref{tab:drn}-\ref{tab:decoder}\footnote{The full implementation written using the PyTorch framework can be found at \url{github.com/yvan674/CurbNet}}.
+We propose to apply the DeepLab v3+ architecture to our stated problem of curb and curb cut segmentation.
+The architecture itself is given in \figref{fig:approach-network} with further descriptions in Tables \ref{tab:drn}-\ref{tab:decoder}\footnote{The full implementation written using the PyTorch framework can be found at \url{github.com/yvan674/CurbNet}}.
 
+\input{figures/approach/network}
 \input{tables/drn}
 \input{tables/bottleneck}
 \input{tables/aspp}
 \input{tables/decoder}
 
 \section{Loss Function}\label{section:approach-lossfunction}
-Initially, the network was trained on standard cross entropy loss, but due to the severe class imbalance, this did not produce meaningful results with the network simply labeling everything as the 0th class, i.e. not curb or curb cut.
-We then used a weighted cross entropy loss function.
-The weights were chosen by taking the normalized inverse of the average proportion other, curb, and curb cut classes in the dataset.
-This provided better results, but was still not producing the results that we wanted \todo{make this sound more formal and include image}.
-
-Using the assumption that all curbs and curb cuts must be located along the perimeter of roads, we used a loss function inspired by the paper "U-Net: Convolutional Networks for Biomedical Image Segmentation" which we call Masked Cross Entropy (MCE) and can be seen in \eqref{eq:mce}~\cite{unet}.
+We chose to use a modified weighted cross entropy loss due to the severe class imbalance.
+Using the assumption that all curbs and curb cuts must be located along the perimeter of roads, we used a loss function inspired by the paper "U-Net: Convolutional Networks for Biomedical Image Segmentation," which we call Masked Cross Entropy (MCE) and defined in \eqref{eq:mce}~\cite{unet}.
 The weighted cross entropy loss function was modified to penalize according to the given weights when labeling within a certain border around road classes, which we call the mask $M$.
 We define road classes $\text{class}_{\text{road}}$ as all classes which can reasonably be expected to be found on roads, including road, road markings, potholes, etc.
-This mask was calculated using a binary dilation on a full $b \times b$ matrix $B$ where $b$ is $0.03 \times \text{image}_{width}$ on the road class, then subtracted by the road class itself.
+This mask was calculated using a binary dilation on a full $b \times b$ matrix $B$ where $b$ is $0.05 \times \text{image}_{width}$ on the road class, then subtracted by the road class itself.
 Thus, this can be formalized as follows:
 \begin{align}
 	B &= \underbrace{
@@ -46,20 +31,22 @@ Thus, this can be formalized as follows:
 				\end{bmatrix}}_{b \text{ columns and } b \text{ rows}} \\
 	M &= \left(\text{class}_{\text{road}} \oplus B\right) - \text{class}_{\text{road}}
 \end{align}
+A visualization of this mask applied to a color street-level image from the Mapillary dataset results in Figure \ref{fig:approach-mask}.
+\input{figures/approach/mask}
 
-The value 0.03 was chosen by the researcher after looking at samples in the dataset and measuring what area around roads are typically curbs.
+The value 0.05 was chosen empirically after looking at samples in the dataset and measuring what area around roads are typically curbs.
 The road class was simply taken from the ground truth data.
 Any labeling outside of $M$ by the network are then given an increased penalty, incentivizing the network to focus labeling around road edges.
 We chose to multiply the penalty for areas outside $M$ by a factor of 3.
 This can be seen in the following formalization of the loss function we used:
 \begin{align}\label{eq:mce}
-	\text{loss}_{MCE}(x, class) &= weight[class]\left(-\log\left(\frac{\text{exp}(x[class])}{\sum_{j}\text{exp}(x[j])}\right)\right)\\
-	\text{with } weight[class] &= 
+	\ell_{MCE}(y, \hat{y}) &=\sum_{m}-y_m\log(\hat{y}_m) \cdot d_m\\
+	\text{with } d_m &= 
 	\begin{cases}
-	weight'[class] & \text{if} x \in M\\
-	weight'[class] \cdot 3 & \text{if} x \notin M
+	d_m' & \text{if } x \in M\\
+	d_m' \cdot 3 & \text{if } x \notin M
 	\end{cases}
 \end{align}
-where $weight'[class]$ are the user defined weights. 
+where $d_m'$ are the user defined weights. 
 This loss function operates on the assumption that curbs and curb cuts must be located adjacent to roads.
-A visualization of the resulting mask $M$ can be seen in \todo{image of mask}.
+A visualization of the resulting mask $M$ can be seen in Figure \ref{fig:approach-mask}.

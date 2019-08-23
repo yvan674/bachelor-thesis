@@ -1,2 +1,5 @@
 \chapter*{Abstract}
-\extend{Write this.}
+In this work we propose CurbNet, a deep learning model based on DeepLab v3+ \cite{deeplab} with a modified version of cross entropy loss, for the purposes of curb and curb cut segmentation.
+Using the encoder-decoder architecture from DeepLab v3+, CurbNet is capable of segmenting curbs and curb cuts in street-level imagery and can be used to aid the pathfinding pipeline used by the Obelix robot.
+By adding this capability to Obelix, we can further its pathfinding capabilities \cite{europa}.
+In this work, we show that CurbNet is a capable model, with its hyperparameters optimized using bayesian optimization and hyperband tuning \cite{bohb} and trained on the Mapillary dataset \cite{mapillary}.

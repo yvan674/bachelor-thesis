@@ -1,0 +1,17 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[]
+	\centering
+\begin{tabular}{@{}lp{2.3cm}}
+\toprule
+Parameter Name    & Value     \\ \midrule
+Learning rate     & 0.0002    \\
+Optimizer         & Adam      \\
+SGD momentum      & -         \\
+Adam epsilon      & 0.1       \\
+Loss weight ratio & 4         \\
+Loss criterion    & Masked cross entropy loss\\ \bottomrule
+\end{tabular}
+\caption[Hyperparameter Optimization Results]{Table of hyperparameters and their values that were optimized for using Bayesian Optimization and HyperBand. \todo{complete table values}}
+\label{tab:hyperparameterresults}
+\end{table}

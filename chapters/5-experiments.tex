@@ -2,35 +2,117 @@
 A series of experiments were carried out to determine the performance of the network in its stated goal of classifying curbs and curb cuts. To this end, the network was tested on the Mapillary Vistas dataset \cite{mapillary} and its hyperparameters optimized using the Bayesian optimization with hyperband (BOHB) procedure from the AutoML group at University of Freiburg \cite{bohb}
 
 \section{Dataset} \label{section:experiments-dataset}
-The Mapillary Vistas dataset was chosen for this task as it was one of the few street-level dataset that included ground truth segmentations of both curbs and curb cuts.
+The Mapillary Vistas dataset was chosen for this task as it was, to our knowledge, the only street-level dataset that included ground truth segmentations of both curbs and curb cuts.
 This dataset contains images from all around the world and includes images captured from different imaging devices including mobile phones, action cameras, and professional imaging solutions.
 These images are captured during various weather, seasonal, and daylight conditions.
 As such, the dataset provides a challenging level of diversity.
 
 With such a diverse dataset, the images must first be preprocessed.
-We process all the images to conform to a 4:3 size ratio, eliminate images without images of curbs or curb cuts, and extract only road, curb, and curb cut classes. 
+We process all the images to conform to a 4:3 size ratio, eliminate images without images of curbs or curb cuts, and extract only road, curb, and curb cut classes.
+
+To optimize training speed with respect to wall clock time, and given the computational constraints, images were resized for training.
+The chosen image resolution was $360 \times 320$ pixels. 
+This allows a batch size of 16 per GPU, given that the GPU has 12 GB of VRAM.
+To further optimize training, the images are resized prior to training and the resized images stored.
+This allows all training and validation images to be loaded into memory, reducing the number of file accesses required and reducing training wall clock time by a factor of two.
+
+An statistical analysis of the dataset with respect to their curb and curb cut content can be found in appendix section \ref{appendix:dataset}.
+
+\section{Network Evaluation}\label{section:experiments-networkevaluation}
+Experiments were done to evaluate the performance of different networks on our dataset.
+Specifically, we identified the small size of curbs relative to the rest of the image causes a severe class imbalance and increases the difficulty in recognizing the smaller features.
+
+Relative to the entire image, curb and curb cut classes make up a relatively small proportion of the image, making up 0.986\% and 0.196\% of images on average respectively.
+As such, three networks with good known performance for urban scene segmentation were chosen and evaluated for their performance classifying curbs and curb cuts.
+We experimented with GoogLeNet, described in the paper "Going Deeper with Convolutions"~\cite{googlenet}; FCN16s, described in "Fully Convolutional Networks for Semantic Segmentation"~\cite{fcn}; and DeepLab v3+, described in the paper "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation"~\cite{deeplab}.
+
+To evaluate which network would have the most potential, we trained each network on a small subset of the whole dataset to find which networks would converge the fastest given a certain budget.
+For each of these runs, the default recommended hyperparameters were used due to time constraints to conduct hyper-parameter optimization with every network.
+The results can be seen in \figref{chart:experiments-networkcomparison} and in \tabref{tab:network-comparison}.
+Given these results, we chose to use DeepLab v3+ as our network.
+
+\input{tables/experiments/network-comparison-table}
+\input{figures/experiments/network-comparison-chart}
+
+\section{Modifications to DeepLab v3+}\label{section:experiments-modifications}
+Given that we are working with the assumption of a camera with a constant attitude, we can also make the assumption that curbs will be more likely towards the bottom and sides of an image.
+Therefore, modifications were made to DeepLab v3+ by adding a preprocessing step which turns the input image into a five-dimensional tensor, with the fourth and fith dimensions being the $x$ and $y$ coordinates of the pixel, respectively.
+The initial convolutional layer was also modified to accept five channels as input.
+Both versions of the network were run with identical hyperparameters on a limited budget and dataset.
+While there was an increase in mean IoU accuracy when using the five-dimensional input tensor, it was negligible and we decided to use the three-dimensional input tensor, given the increased training time with a five-dimensional input tensor.
+
+\todo{include 5D vs 3D results}
+
 
 \section{Hyperparameters} \label{section:experiments-hyperparameters}
-Hyperparameter tuning was done by using BOHB.
-\extend{include graph and discussion}
+Hyperparameter tuning was done by using Bayesian Optimization with HyperBand.
+The hyperparameters that were tuned were the learning rate; optimizer; momentum, if the optimizer chosen was stochastic gradient descent; epsilon, if the optimizer chosen was Adam; the weight ratio for the loss weights; and the loss criterion.
+
+The learning rate is optimized between the interval $\left[1 \times 10^{-5}, 1 \times 10^{-2}\right]$, varied on a logarithmic scale.
+The optimizer is a categorical choice between stochastic gradient descent or Adam.
+The momentum is optimized between the interval $\left[0, 0.99\right]$.
+The epsilon value is optimized between the interval $\left[1 \times 10^{-2}, 1\right]$.
+The weight ratio for the loss weight determines the ratio of the weights between the curb and curb cut.
+The value of the weight for the "other" class is one-tenth of the sum of curb and curb cut weights, formally defined as:
+\begin{equation}
+	\begin{split}
+		\frac{x}{y} &= r, ~r \in \left[2, 6\right]\\
+		z &= \frac{x + y}{10}
+	\end{split}
+\end{equation}
+where $x$ is the weight for the curb class, $y$ the weight for the curb cut class, $z$ the weight for the "other" class, and $r$ the ratio value that is optimized.
+The loss criterion is a categorical choice between weighted cross entropy loss or masked cross entropy loss.
+Further details of the hyperparameters optimized can be found in \tabref{tab:hyperparameters}.
+
+\input{tables/experiments/hyperparameters}
+
+\extend{include graph}
+The hyperparameters are optimized according to the above parameters using a cluster of \todo{number of} GPUs over a budget of 12 iterations.
+The resulting optimized values for the hyperparameters are in \tabref{tab:hyperparameterresults}.
+More detailed results of each run of the hyperparameter optimization can be found in appendix section \ref{appendix:hpoptimresults}.
+
+Given increased compute resources and time, we believe that we could further optimize the hyperparameters and achieve better results with our network.
+
+\input{tables/experiments/hyperparameter-results}
 
 \section{Training Pipeline} \label{section:experiments-trainingpipeline}
-%Briefly explain how data is preprocessed
-%Explain use of GUI to train in person and command line to train over ssh
-%Explain how the trainer and was made modular so networks, optimizers, and datasets could be swapped easily without much reconfiguration needed simply using cmd line arguments when running the main program
+The training pipeline is a main script which calls the training loop with a set of parameters defined in either a JSON file or through command-line arguments.
+Using a JSON file makes it simpler to change parameters as nothing is hard-coded and command-line arguments do not have to memorized or meticulously typed out each time.
 
-\section{Evaluation Method} \label{section:experiments-evaluationmethod}
-%○ Focus on this
-%○ Accuracy measurement i.e. use of IoU
-%○ Explain why the loss was chosen and why it is a valid choice
-%○ Explain why the architecture was chosen and what led to this decision
-%	§ State of the art
-%	§ Self testing
-%	§ Excels at finding smaller objects further away
-%		□ Very important for curbs which may only be a few pixels wide
-%○ What was done to get the best possible result
-%○ How was the network improved over time
-%	§ Where the network fails and how it was overcome
-%○ Discussion of loss used over time
+A Graphical User Interface (GUI) is also available, made using the tkinter framework, which is capable of visualizing the ground truth segmentation, the network output, a live display of the current loss and mean IoU accuracy, and other statistics.
+This GUI can be seen in \figref{fig:experiments-gui}.
 
-\section{Results} \label{section:experiments-results}
+A Command Line Interface (CLI) is also available, made using the ncurses framework, which is capable of displaying various statistics during training.
+The CLI also allows training remotely using secure shell (SSH), as the GUI would fail to start if invoked remotely through the command line.
+A screen capture of the CLI can be seen in \figref{fig:experiments-cli}
+
+\input{figures/experiments/ui}
+
+The different components necessary to train the network are written in such a way as to be modular, with nearly everything being easily configurable.
+For example, the network, optimizer, and loss criterion can be easily swapped by changing command-line arguments or parameters in the JSON file.
+This makes running different experiments straightforward.
+
+\section{Evaluation Metrics} \label{section:experiments-evaluationmetrics}
+The mean Intersection over Union (mIoU) is the main evaluation metric chosen.
+IoU measures the intersection of the prediction and the ground truth data, divided by the union of the prediction and the ground truth data.
+This is done on a per class basis and then averaged to get the mIoU.
+
+
+\section{Results}\label{section:experiments-results}
+Running our network with the optimal hyperparameters chosen by the hyperparameter search in \ref{section:experiments-hyperparameters} for \todo{how many iterations did we train} iterations, we were able to achieve an accuracy of \todo{value}.
+We were able to train the network for \todo{how many before overfit} before the network started overfitting to the training set.
+
+The network is able to produce the segmentations seen in \todo{include figure}.
+
+Analyzing these results, we can see that the network excels at \todo{what does it excel at}.
+Surprisingly, the network can even identify curbs and curb cuts which are in the distance which have a relatively small size.
+In these cases, the segmentation is significantly larger than the size of the curb itself, i.e. even though the intersection is significant, there is a significant area around the curb it falsely identifies as curb.
+An example of this can be seen in \todo{figure}
+
+The main failure modes of the network are falsely identifying non-curb road edges as curbs and identifying certain road markings as curbs.
+Certain road edges which have a different texture, but are not raised, are sometimes also segmented as curbs.
+Certain road markings which are located near road edges are also sometimes segmented as curbs.
+Examples of both of these cases can be seen in figure \todo{figure}
+We hypothesize that this may be a result of the network not having depth information.
+
+Given depth information, it may be possible to reduce these false positives and further increase the performance of the network.

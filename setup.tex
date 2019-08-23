@@ -42,7 +42,8 @@
     \usepackage[dvipsnames]{xcolor}  % more colors
     \usepackage{array}  % custom format per column in table - needed on the title page
     \usepackage{graphicx}  % include graphics
-    \usepackage{subfig}  % divide figure, e.g. 1(a), 1(b)...
+	\usepackage{caption}  % Allows subcaptions
+	\usepackage{subcaption}
     \usepackage{amsmath}  % |
     \usepackage{amsthm}   % | math, bmatrix etc
     \usepackage{amsfonts} % |
@@ -53,7 +54,6 @@
                 pdfborder={0 0 0},backref=false,colorlinks=false]{hyperref}
     \usepackage{etoolbox} % if-else commands
 
-
     %==========================================
     % You might not need the following packages, I only included them as they
     % are needed for the example floats
@@ -61,7 +61,22 @@
     \usepackage[english, ruled]{algorithm2e}
     \usepackage{bm}  % bold greek variables (boldmath)
     \usepackage{tikz}
+    \usepackage{pgfmath}
+    \usepackage{pgfplots}
+    \pgfplotsset{compat=newest}
     \usetikzlibrary{positioning}  % use: above left of, etc
+    \usetikzlibrary{arrows,3d,matrix}
+    
+    % For convolutional network
+     % see the explanation below
+    \makeatletter
+    \tikzoption{canvas is xy plane at z}[]{%
+    	\def\tikz@plane@origin{\pgfpointxyz{0}{0}{#1}}%
+    	\def\tikz@plane@x{\pgfpointxyz{1}{0}{#1}}%
+    	\def\tikz@plane@y{\pgfpointxyz{0}{1}{#1}}%
+    	\tikz@canvas@is@plane
+    }
+    \makeatother
     
     % required for the ToDo list
     \usepackage{ifthen}
