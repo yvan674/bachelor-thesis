@@ -20,11 +20,12 @@ Towards the goal of this work, the segmentation of curbs and curb cuts in a scen
 \input{chapters/3_1-neural-networks}
 
 \section{Curbs and Curb Cuts}\label{section:background-curbs}
-Curbs are the concrete or stone edging of a road. Curbs usually separator the road from some other area with a different elevation, usually a pedestrian sidewalk.
-An example of a sidewalk with a curb can be seen in Figure \ref{fig:background-curb}
+Curbs are the concrete or stone edging of a road. Curbs usually separate the road from some other area with a different elevation, usually a pedestrian sidewalk.
+An example of a sidewalk with a curb can be seen in Figure \ref{fig:background-curb}.
 Curb cuts are "cuts" in the curb that allow a pedestrian sidewalk to have a gentle slope down to street level.
-An example of a sidewalk with a curb cut can be seen in Figure \ref{fig:background-curbcut}
-Originally, these cuts were made to allow accessibility access, especially for those requiring wheelchairs, as to a wheelchair user, curbs represent a significant barrier in terms of traversability, as was discussed in the article "Curb Cuts" by Cynthia Gorney and Delaney Hall \cite{99pi}. These curb cuts first started appearing fifty years ago from the efforts of activist Ed Roberts and his push to make city streets more accessible.
+An example of a sidewalk with a curb cut can be seen in Figure \ref{fig:background-curbcut}.
+Originally, these cuts were made to allow accessibility access, especially for those requiring wheelchairs.
+To a wheelchair user, curbs represent a significant barrier in terms of traversability, as was discussed in the article "Curb Cuts" by Cynthia Gorney and Delaney Hall \cite{99pi}. Curb cuts first started appearing fifty years ago from the efforts of activist Ed Roberts and his push to make city streets more accessible.
 
 \input{figures/background/curbs}
 
@@ -102,7 +103,7 @@ Adam utilizes the concept of momentum, which incorporates previous gradients int
 It does this by calculating an exponential moving average and the square of previous gradients and using these to determine the next gradient.
 
 \section{Backpropagation}\label{section:background-backpropagation}
-Backpropagation is a learning procedure used in artificial neural networks to adjust network weights and produce internal representations "important features in the task domain", first described the David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams in their paper "Learning representations by back-propagating errors"~\cite{backprop}.
+Backpropagation is a learning procedure used in artificial neural networks to adjust network weights and produce internal representations of "important features in the task domain," first described in 1986 by David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams in their paper "Learning representations by back-propagating errors"~\cite{backprop}.
 Backpropagation efficiently and repeatedly adjusts the network weights to minimize the network error, which is calculated by the loss function.
 
 Calculating the network weights is done layer by layer, starting with the final output layer.
@@ -132,7 +133,7 @@ Since unit $i$ is connected to multiple successor units, its value is a summatio
 \begin{align}
 	\frac{\partial \ell}{\partial y_i} &= \sum_{j \in J} \frac{\partial \ell}{\partial x_j} \cdot w_{ji}
 \end{align}
-This calculation can be done in parallel, thanks to parallel computing architecture, completing to gradient calculations for the penultimate layer.
+This calculation can be done in parallel, thanks to parallel computing architecture, completing the gradient calculations for the penultimate layer.
 This procedure is then repeated for all layers, each time using the previously computed values to allow for efficient computation.
 
 \input{chapters/3_2-hyperparameters}

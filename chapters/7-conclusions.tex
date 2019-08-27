@@ -6,9 +6,10 @@ Training and validation was performed on the Mapillary dataset \cite{mapillary}.
 We attempted to improve performance by introducing pixel coordinates to the input pixels, but this resulted in negligible gains and was thus omitted from the final model.
 Hyperparameter optimization was performed using the bayesian optimization and hyperband framework developed by the AutoML group at the University of Freiburg.
 
-To evaluate our model, we used mean intersection over union and used a validation subset of the Mapillary dataset.
+To evaluate our model, we used mean Intersection over Union and used a validation subset of the Mapillary dataset.
 Our network was able to perform with \todo{value}\% mean IoU on this validation set.
-It is capable of segmenting curbs and curb cuts even when they are located a distance and are small relative to the rest of the image.
+It is capable of segmenting curbs and curb cuts even when they are located at a distance, therefore being small relative to the rest of the image.
+In these cases, though, the network is prone to identifying areas around the curb as also being part of the curb itself.
 Failure cases typically occur at road edges which have a different material, but are not elevated, and with road markings which are located very close to the road edge.
 
 We propose that future work should be done with additional depth information.

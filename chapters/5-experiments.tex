@@ -1,5 +1,5 @@
 \chapter{Experiments}\label{chap:experiments}
-A series of experiments were carried out to determine the performance of the network in its stated goal of classifying curbs and curb cuts. To this end, the network was tested on the Mapillary Vistas dataset \cite{mapillary} and its hyperparameters optimized using the Bayesian optimization with hyperband (BOHB) procedure from the AutoML group at University of Freiburg \cite{bohb}
+A series of experiments were carried out to determine the performance of the network in its stated goal of classifying curbs and curb cuts. To this end, the network was tested on the Mapillary Vistas dataset \cite{mapillary} and its hyperparameters optimized using the Bayesian optimization with hyperband (BOHB) procedure from the AutoML group at the University of Freiburg \cite{bohb}
 
 \section{Dataset} \label{section:experiments-dataset}
 The Mapillary Vistas dataset was chosen for this task as it was, to our knowledge, the only street-level dataset that included ground truth segmentations of both curbs and curb cuts.
@@ -16,7 +16,9 @@ This allows a batch size of 16 per GPU, given that the GPU has 12 GB of VRAM.
 To further optimize training, the images are resized prior to training and the resized images stored.
 This allows all training and validation images to be loaded into memory, reducing the number of file accesses required and reducing training wall clock time by a factor of two.
 
-An statistical analysis of the dataset with respect to their curb and curb cut content can be found in appendix section \ref{appendix:dataset}.
+After running an analysis of the dataset with respect to their curb and curb cut content and image dimensions, we found that there were 15,160 usable images in the training set and 1610 usable images in the validation set.
+Usable images in this case refers to images that contains both curbs and curb cuts.
+A detailed results of the analysis of can be found in Appendix section \ref{appendix:dataset}.
 
 \section{Network Evaluation}\label{section:experiments-networkevaluation}
 Experiments were done to evaluate the performance of different networks on our dataset.
@@ -36,13 +38,22 @@ Given these results, we chose to use DeepLab v3+ as our network.
 
 \section{Modifications to DeepLab v3+}\label{section:experiments-modifications}
 Given that we are working with the assumption of a camera with a constant attitude, we can also make the assumption that curbs will be more likely towards the bottom and sides of an image.
-Therefore, modifications were made to DeepLab v3+ by adding a preprocessing step which turns the input image into a five-dimensional tensor, with the fourth and fith dimensions being the $x$ and $y$ coordinates of the pixel, respectively.
+Therefore, modifications were made to DeepLab v3+ by adding a preprocessing step which turns the input image into a five-dimensional tensor, with the fourth and fifth dimensions being the $x$ and $y$ coordinates of the pixel, respectively.
 The initial convolutional layer was also modified to accept five channels as input.
 Both versions of the network were run with identical hyperparameters on a limited budget and dataset.
 While there was an increase in mean IoU accuracy when using the five-dimensional input tensor, it was negligible and we decided to use the three-dimensional input tensor, given the increased training time with a five-dimensional input tensor.
 
 \todo{include 5D vs 3D results}
 
+\section{Loss Function Evaluation}\label{section:experiments-loss}
+Our custom loss function masked cross entropy loss was evaluated against weighted cross entropy loss.
+The results, shown in \figref{chart:experiments-losstraining} and \ref{chart:experiments-lossvalidation}.
+These results show that the validation loss was similar for the first 2370 iterations.
+After this point, masked cross entropy loss shows a clear advantage in validation accuracy compared to weighted cross entropy loss.
+After 4740 iterations, shows a clear performance advantage, with a difference of 5.56 mean IoU percentage points.
+As such, we have chosen to implement our network using masked cross entropy loss as our loss function.
+
+\input{figures/experiments/losscomparison}
 
 \section{Hyperparameters} \label{section:experiments-hyperparameters}
 Hyperparameter tuning was done by using Bayesian Optimization with HyperBand.
@@ -63,13 +74,13 @@ The value of the weight for the "other" class is one-tenth of the sum of curb an
 where $x$ is the weight for the curb class, $y$ the weight for the curb cut class, $z$ the weight for the "other" class, and $r$ the ratio value that is optimized.
 The loss criterion is a categorical choice between weighted cross entropy loss or masked cross entropy loss.
 Further details of the hyperparameters optimized can be found in \tabref{tab:hyperparameters}.
-
+\todo{make sure cross entropy loss or masked cross entropy loss}
 \input{tables/experiments/hyperparameters}
 
 \extend{include graph}
 The hyperparameters are optimized according to the above parameters using a cluster of \todo{number of} GPUs over a budget of 12 iterations.
 The resulting optimized values for the hyperparameters are in \tabref{tab:hyperparameterresults}.
-More detailed results of each run of the hyperparameter optimization can be found in appendix section \ref{appendix:hpoptimresults}.
+More detailed results of each run of the hyperparameter optimization can be found in Appendix section \ref{appendix:hpoptimresults}.
 
 Given increased compute resources and time, we believe that we could further optimize the hyperparameters and achieve better results with our network.
 
@@ -77,7 +88,7 @@ Given increased compute resources and time, we believe that we could further opt
 
 \section{Training Pipeline} \label{section:experiments-trainingpipeline}
 The training pipeline is a main script which calls the training loop with a set of parameters defined in either a JSON file or through command-line arguments.
-Using a JSON file makes it simpler to change parameters as nothing is hard-coded and command-line arguments do not have to memorized or meticulously typed out each time.
+Using a JSON file makes it simpler to change parameters as nothing is hard-coded and command-line arguments do not have to be memorized or meticulously typed out each time.
 
 A Graphical User Interface (GUI) is also available, made using the tkinter framework, which is capable of visualizing the ground truth segmentation, the network output, a live display of the current loss and mean IoU accuracy, and other statistics.
 This GUI can be seen in \figref{fig:experiments-gui}.
@@ -89,7 +100,7 @@ A screen capture of the CLI can be seen in \figref{fig:experiments-cli}
 \input{figures/experiments/ui}
 
 The different components necessary to train the network are written in such a way as to be modular, with nearly everything being easily configurable.
-For example, the network, optimizer, and loss criterion can be easily swapped by changing command-line arguments or parameters in the JSON file.
+For example, the network, optimizer, and loss criterion can easily be swapped by changing command-line arguments or parameters in the JSON file.
 This makes running different experiments straightforward.
 
 \section{Evaluation Metrics} \label{section:experiments-evaluationmetrics}
@@ -99,14 +110,14 @@ This is done on a per class basis and then averaged to get the mIoU.
 
 
 \section{Results}\label{section:experiments-results}
-Running our network with the optimal hyperparameters chosen by the hyperparameter search in \ref{section:experiments-hyperparameters} for \todo{how many iterations did we train} iterations, we were able to achieve an accuracy of \todo{value}.
+Running our network with the optimal hyperparameters chosen by the hyperparameter search in Section \ref{section:experiments-hyperparameters} for \todo{how many iterations did we train} iterations, we were able to achieve an accuracy of \todo{value}.
 We were able to train the network for \todo{how many before overfit} before the network started overfitting to the training set.
 
 The network is able to produce the segmentations seen in \todo{include figure}.
 
 Analyzing these results, we can see that the network excels at \todo{what does it excel at}.
-Surprisingly, the network can even identify curbs and curb cuts which are in the distance which have a relatively small size.
-In these cases, the segmentation is significantly larger than the size of the curb itself, i.e. even though the intersection is significant, there is a significant area around the curb it falsely identifies as curb.
+Surprisingly, the network can even identify curbs and curb cuts which are in the distance and thus have a relatively small size.
+In these cases, the segmentation is significantly larger than the size of the curb itself, i.e. even though the intersection is significant, there is a significant area around the curb that is falsely identified as part of the curb.
 An example of this can be seen in \todo{figure}
 
 The main failure modes of the network are falsely identifying non-curb road edges as curbs and identifying certain road markings as curbs.

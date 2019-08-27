@@ -3,7 +3,8 @@ To semantically segment urban scenes and extract predictions for curbs and curb 
 In this chapter, the architecture used and an explanation of our loss function will be discussed.
 
 \section{Architecture Selection} \label{section:approach-architectureselection}
-We came to use the DeepLab v3+ architecture after running these experiments due to significantly outperforming the other networks. A further discussion of the results can be found in section \ref{section:experiments-networkevaluation}.
+We came to use the DeepLab v3+ architecture after running these experiments as it outperformed other networks that were tested.
+A further discussion of the results can be found in section and the experiments done to select the network can be found in Section \ref{section:experiments-networkevaluation}.
 
 \subsection{Network Architecture}\label{section:approach-networkarchitecture}
 We propose to apply the DeepLab v3+ architecture to our stated problem of curb and curb cut segmentation.
@@ -36,7 +37,7 @@ A visualization of this mask applied to a color street-level image from the Mapi
 
 The value 0.05 was chosen empirically after looking at samples in the dataset and measuring what area around roads are typically curbs.
 The road class was simply taken from the ground truth data.
-Any labeling outside of $M$ by the network are then given an increased penalty, incentivizing the network to focus labeling around road edges.
+Any labeling outside of $M$ by the network is then given an increased penalty, incentivizing the network to focus labeling around road edges.
 We chose to multiply the penalty for areas outside $M$ by a factor of 3.
 This can be seen in the following formalization of the loss function we used:
 \begin{align}\label{eq:mce}
