@@ -12,7 +12,7 @@ The activation function $f_a$ calculates $a_j$ given the network input $x_j$ and
 \end{align}
 The output function $f_o$ computes $y_j$ based on $a_j$ and is defined as:
 \begin{align}
-	x_j &= f_o\left(a_j\right)
+	y_j &= f_o\left(a_j\right)
 \end{align}
 Many activation functions exists and are used including the identity function and the rectified linear unit (ReLU), defined as:
 \begin{align}
@@ -38,11 +38,13 @@ Further discussion on backpropagation can be found in Section \ref{section:backg
 Deep neural networks are so called deep due to having multiple "hidden" layers between the input and output which are not accessed directly.
 
 \subsection{Convolutional Neural Networks}\label{section:background-cnn}
-Convolutional Neural Networks (CNNs) are a specific class of deep neural networks and have been found to perform exceptionally for image analysis, such as image classification and segmentation.
+Convolutional Neural Networks (CNNs) are a specific class of deep neural networks and have been found to perform exceptionally well for image analysis, such as image classification and segmentation.
 The inspiration for CNNs come from biological processes to simulate the organization of the visual cortex in animals~\cite{cnnbiology}.
 Convolutional layers are the core building blocks of CNNs.
-These convolutional layers consist of a set of learnable filters which are convolved across the entire input and computing the dot products between the different entries of the filter.
+These convolutional layers consist of a set of learnable filters which are convolved across the entire input and compute the dot products between the different entries of the filter.
+
 \input{figures/background/convolution}
+
 By using multiple convolutional layers, higher level features can be extracted and a feature map generated.
 The module responsible for extracting the feature map is commonly known as the encoder.
 

@@ -1,11 +1,12 @@
 \chapter{Introduction}\label{chap:introduction}
 Semantic segmentation is a popular and promising research topic in the field of computer vision, and particularly for autonomous vehicles.
-By semantically segmenting the scene, the autonomous vehicle is able to identify various objects in field of view, which is important for autonomous vehicle and robots to safely navigate an environment.
-Generally, most implementations attempt to segment road surfaces but in this thesis, we propose the segmentation of curbs and curb cuts to allow safer sidewalk navigation.
+By semantically segmenting the scene, the autonomous vehicle is able to identify various objects in its field of view, which is important for autonomous vehicle and robots to safely navigate an environment.
+Generally, most implementations aim to segment road surfaces but in this thesis, we propose additionally the segmentation of curbs and curb cuts to allow safer sidewalk navigation.
+Sidewalks, roads, curbs, and curbs cuts will be jointly referred to as traversability classes for the remainder of the work.
 
-The Europa project has resulted in the Obelix robotic platform, which has already been demoed to successfully perform pedestrian navigation in urban environments~\cite{europa}\cite{obelix-slam}.
+The Europa project has resulted in the Obelix robotic platform, which has already been demonstrated to successfully perform pedestrian navigation in urban environments~\cite{europa}\cite{obelix-slam}.
 We propose to add to this platform the ability to detect curbs and curb cuts using semantic segmentation.
-The Obelix platform is the result of a joint project to build a robotic platform capable of robotic navigation~\cite{europa}. 
+The Obelix platform is the result of a joint project to build a robotic platform capable of autonomous robotic navigation~\cite{europa}. 
 In its current state, Obelix is already capable of localization and navigation using a map generated using LIDAR, but it is unable to determine what surface type it is driving on, e.g. asphalt, concrete, carpet, etc.~\cite{jannik}.
 Research is currently underway to extend its pathfinding ability, using the onboard cameras to classify terrains that Obelix will encounter~\cite{jannik}.
 This work specifically aims to add to said research by additionally identifying curbs and curb cuts, providing constraints for the route planner.
