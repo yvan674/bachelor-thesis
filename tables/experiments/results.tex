@@ -1,0 +1,12 @@
+\begin{table}[]
+	\centering
+\begin{tabular}{@{}crrrrrr@{}}
+	\toprule
+	& \multicolumn{5}{c}{IoU} &  \\ \cmidrule(lr){2-6}
+	Dataset & Curb & Curb Cut & Road & Sidewalk & Ignore & mIoU \\ \midrule
+	Training & 24.219\% & 28.064\% & 83.372\% & 31.523\% & 95.673\% & 52.570\% \\
+	Validation & 22.987\% & 25.292\% & 79.942\% & 28.587\% & 94.131\% & 50.188\% \\ \bottomrule
+\end{tabular}
+\caption[Network Results]{Results after training the network for 30,366 iterations on the Mapillary Vistas dataset \cite{mapillary} and evaluating it against both the training and validation datasets using IoU. The network achieves higher accuracy on the training dataset than on the validation dataset, but did not overfit on the training set.}
+\label{tab:mapillary-results}
+\end{table}

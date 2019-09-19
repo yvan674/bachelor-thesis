@@ -5,16 +5,16 @@ Generally, most implementations aim to segment road surfaces but in this thesis,
 Sidewalks, roads, curbs, and curbs cuts will be jointly referred to as traversability classes for the remainder of the work.
 
 The Europa project has resulted in the Obelix robotic platform, which has already been demonstrated to successfully perform pedestrian navigation in urban environments~\cite{europa}\cite{obelix-slam}.
-We propose to add to this platform the ability to detect curbs and curb cuts using semantic segmentation.
-The Obelix platform is the result of a joint project to build a robotic platform capable of autonomous robotic navigation~\cite{europa}. 
+We propose to add to this platform the ability to detect traversability classes using semantic segmentation.
+The Obelix platform is the result of a joint project to build a robotic platform capable of autonomous robotic navigation~\cite{europa}.
 In its current state, Obelix is already capable of localization and navigation using a map generated using LIDAR, but it is unable to determine what surface type it is driving on, e.g. asphalt, concrete, carpet, etc.~\cite{jannik}.
-Research is currently underway to extend its pathfinding ability, using the onboard cameras to classify terrains that Obelix will encounter~\cite{jannik}.
-This work specifically aims to add to said research by additionally identifying curbs and curb cuts, providing constraints for the route planner.
-This will allow the route planner to identify curbs, which it cannot traverse, and curb cuts, which it can.
+Research is currently underway to extend its path finding ability, using the onboard cameras to classify terrains that Obelix will encounter~\cite{jannik}.
+This work specifically aims to add to said research by additionally identifying traversability, providing addtional constraints for the local trajectory planner.
+This will allow the local trajectory planner to identify curbs, which it cannot traverse, and curb cuts, which it can.
 
 \input{figures/introduction/obelix}
 
-The aim of this work is thus to implement a deep learning model capable of the semantic segmentation of curbs and curb cuts using a single camera image.
+The aim of this work is thus to implement a deep learning model capable of the semantic segmentation of the aforementioned traversability classes using a single RGB camera image.
 To this end, we propose the implemention of a convolutional neural network (CNN) based on the paper "Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation" by Chen Liang Chieh et al~\cite{deeplab}.
 We additionally use a modified loss function based on cross entropy loss.
 We call our proposed implementation CurbNet.

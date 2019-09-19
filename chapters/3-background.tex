@@ -3,7 +3,7 @@ Some background knowledge is necessary for the reader to have an understanding o
 This chapter on the background of this work will discuss semantic segmentation, machine learning with artificial neural networks and convolutional neural networks, curb segmentation, loss functions, network optimizers, and binary dilation.
 
 \section{Semantic Segmentation}\label{section:background-segmentation}
-Unlike image classification, which classifies the contents of an image, semantic segmentation is the use of some algorithm to process an image and assign class labels to each individual pixel~\cite{segmentation-medium}.
+Unlike image classification, which classifies the contents of an image as a whole, semantic segmentation is the use of some algorithm to process an image and assign class labels to each individual pixel~\cite{segmentation-medium}.
 This adds the ability to locate and classify multiple objects in a given scene.
 For example, the ground truth segmentation of the street-level image in \figref{fig:background-raw} can be seen in \figref{fig:background-segmented}.
 Each pixel of the image has been assigned a class, which is represented by the different colors in the segmented image.
@@ -15,7 +15,7 @@ By segmenting an image in this way, the program can interpret the scene semantic
 For example, by receiving the segmented image, a program can identify that there are line markings on the road and that there is a vehicle in front of it.
 The segmentation of images in this way is essential in many robotic applications as it allows further higher level processing of the scene.
 
-Towards the goal of this work, the segmentation of curbs and curb cuts in a scene allows Obelix to more accurately find a path allowing for the safe traversal from sidewalk to street level via curb cuts.
+Towards the goal of this work, the segmentation of traversability classes in a scene allows Obelix to more accurately find a path allowing for the safe traversal from sidewalk to street level via curb cuts.
 
 \input{chapters/3_1-neural-networks}
 
@@ -25,7 +25,11 @@ An example of a sidewalk with a curb can be seen in Figure \ref{fig:background-c
 Curb cuts are "cuts" in the curb that allow a pedestrian sidewalk to have a gentle slope down to street level.
 An example of a sidewalk with a curb cut can be seen in Figure \ref{fig:background-curbcut}.
 Originally, these cuts were made to allow accessibility access, especially for those requiring wheelchairs.
-To a wheelchair user, curbs represent a significant barrier in terms of traversability, as was discussed in the article "Curb Cuts" by Cynthia Gorney and Delaney Hall \cite{99pi}. Curb cuts first started appearing fifty years ago from the efforts of activist Ed Roberts and his push to make city streets more accessible.
+To a wheelchair user, curbs represent a significant barrier in terms of traversability, as was discussed in the article "Curb Cuts" by Cynthia Gorney and Delaney Hall \cite{99pi}. 
+Curb cuts first started appearing fifty years ago from the efforts of activist Ed Roberts and his push to make city streets more accessible.
+
+Wheeled robots are also unable to traverse curbs.
+They therefore require curb cuts to traverse urban environments where curbs are present.
 
 \input{figures/background/curbs}
 

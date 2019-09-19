@@ -1,7 +1,7 @@
 \section{Artificial Neural Networks}
 Artificial neural networks are a computing system inspired by biological neurons. Neural networks are comprised of neurons which are capable of taking any number of numerical inputs and outputs a numerical value.
 
-\input{figures/background/neural-net.tex}
+\input{figures/background/neural-net}
 
 Mathematically, a single neuron is a function.
 The function of a neuron $j$ receiving input $x_j$ and producing output $y_j$ is composed of the activation $a_j$, an activation function $f_a$ which returns the activation, and an output function $f_{o}$.
@@ -45,7 +45,7 @@ These convolutional layers consist of a set of learnable filters which are convo
 
 \input{figures/background/convolution}
 
-By using multiple convolutional layers, higher level features can be extracted and a feature map generated.
+By using multiple convolutional layers, higher level features can be extracted, generating a feature map.
 The module responsible for extracting the feature map is commonly known as the encoder.
 
 The convolutional layers that make up the CNN are called the feature encoder.
@@ -54,3 +54,16 @@ These convolutional layers work by taking the deep feature maps produced by the 
 This module is known as the decoder.
 The resulting vector produced is a probability of each pixel being a certain class.
 Applying an argmax operation on this vector produces a segmentation of the input image.
+
+A bottleneck structure may also be used to increase performance.
+A bottleneck structure in a convolutional neural network reduces the number of features by performing a $1 \times 1$ convolution on a tensor before performing a convolution operation.
+A final $1 \times 1$ convolution is then performed to expand the tensor to contain a meaningful combination features.
+As the input features are correlated, redundancy can be removed by performing the first $1 \times 1$ convolution.
+
+For example, performing a $3 \times 3$ convolution on a $256 \times 256$ input tensor requires more than 589,000 operations.
+A bottleneck structure can be used to reduce the dimensionality of the input tensor to only 64 dimensions using a $1 \times 1$ convolution.
+The $3 \times 3$ convolution is then performed on this tensor.
+Finally, the resulting tensor is re-expanded back to the original 256 dimensions using another $1 \times 1$ convolution.
+This would result in slightly over 69,000 operations, significantly less than without the bottleneck structure.
+
+This reduces both the number of operations required as well as the number of parameters in the network.

@@ -8,9 +8,8 @@ Learning rate     & Float          & $\left[1 \times 10^{-5}, 1 \times 10^{-2}\r
 Optimizer         & Categorical    & Adam or SGD                                      &                                      \\
 SGD momentum      & Float          & $\left[0, 0.99\right]$                           & Only active when the optimizer is SGD\\
 Adam epsilon      & Float          & $\left[1 \times 10^{-2}, 1\right]$               & Only active when the optimizer is Adam\\
-Loss weight ratio & Float          & $\left[2,6\right]$                               &                                       \\
 Loss criterion    & Categorical    & Weighted cross entropy or masked cross entropy   &                                      \\ \bottomrule
 \end{tabular}
-\caption[Hyperparameter Details]{Table of hyperparameters and their values that were optimized for using Bayesian Optimization and HyperBand.}
+\caption[Hyperparameter Details]{The hyperparameters and their possible value ranges which we optimized for using Bayesian Optimization and HyperBand. These hyperparameters have been chosen as we believe that they will have the greatest impact on network performance.}
 \label{tab:hyperparameters}
 \end{table}

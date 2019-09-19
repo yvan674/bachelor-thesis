@@ -1,4 +1,4 @@
-\begin{figure}
+\begin{figure}[t]
     \centering
     \begin{subfigure}{0.45\textwidth}
     	\centering
@@ -11,5 +11,5 @@
         \includegraphics[width=0.9\textwidth]{figures/background/segmented.png} % second figure itself
         \caption{The segmented version of the image, each color representing a different class.} \label{fig:background-segmented}
     \end{subfigure}
-	\caption[An example of semantic segmentation.]{An example of semantic segmentation on a color image. This example is taken from the Mapillary dataset~\cite{mapillary}.}
+	\caption[An example of semantic segmentation.]{An example of semantic segmentation on a color image. This example is taken from the Mapillary dataset~\cite{mapillary}. In this example, the RGB image in \figref{fig:background-raw} has been segmented by a human in order to produce the ground truth segmentation seen in \figref{fig:background-segmented}. These image pairs can be used to train and validate the performance of a deep learning based semantic segmentation model.}
 \end{figure}

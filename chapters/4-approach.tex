@@ -1,5 +1,5 @@
 \chapter{Approach}\label{chap:approach}
-To semantically segment urban scenes and extract predictions for curbs and curb cuts, we proposed to use a deep neural network based on the DeepLab v3+ architecture with a loss function inspired by "U-Net: Convolutional Networks for Biomedical Image Segmentation" by Olaf Ronneberger et al.~\cite{unet}.
+To semantically segment urban scenes and extract predictions for traversability classes, we proposed to use a deep neural network based on the DeepLab v3+ architecture with a loss function inspired by "U-Net: Convolutional Networks for Biomedical Image Segmentation" by Olaf Ronneberger et al.~\cite{unet}.
 In this chapter, the architecture used and an explanation of our loss function will be discussed.
 
 \section{Architecture Selection} \label{section:approach-architectureselection}
@@ -18,7 +18,7 @@ The architecture itself is given in \figref{fig:approach-network} with further d
 
 \section{Loss Function}\label{section:approach-lossfunction}
 We chose to use a modified weighted cross entropy loss due to the severe class imbalance.
-Using the assumption that all curbs and curb cuts must be located along the perimeter of roads, we used a loss function inspired by the paper "U-Net: Convolutional Networks for Biomedical Image Segmentation," which we call Masked Cross Entropy (MCE) and defined in \eqref{eq:mce}~\cite{unet}.
+Using the assumption that all curbs and curb cuts must be located along the perimeter of roads, we used a loss function inspired by the paper "U-Net: Convolutional Networks for Biomedical Image Segmentation," which we call Masked Cross Entropy (MCE) and is defined in \eqref{eq:mce}~\cite{unet}.
 The weighted cross entropy loss function was modified to penalize according to the given weights when labeling within a certain border around road classes, which we call the mask $M$.
 We define road classes $\text{class}_{\text{road}}$ as all classes which can reasonably be expected to be found on roads, including road, road markings, potholes, etc.
 This mask was calculated using a binary dilation on a full $b \times b$ matrix $B$ where $b$ is $0.05 \times \text{image}_{width}$ on the road class, then subtracted by the road class itself.

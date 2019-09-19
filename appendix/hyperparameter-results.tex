@@ -1,3 +1,34 @@
 % This will include the results of the hyperparameter optimization
 \section{Detailed Hyperparameter Optimization Results}\label{appendix:hpoptimresults}
-\todo{Hyperparameter Optimization Results}
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{@{}clllll@{}}
+		\toprule
+		& \multicolumn{5}{c}{Parameter} \\\cmidrule(lr){2-6}
+		Run Number & Learning rate & Optimizer & Momentum & Epsilon & Loss criterion \\ \midrule
+		1 & $2.017 \times 10^{-5}$ & Adam & - & 0.8 & MCE \\
+		2 & $3.567 \times 10^{-5}$ & Adam & - & 0.95 & MCE \\
+		3 & $8.073 \times 10^{-5}$ & Adam & - & 0.4 & MCE \\
+		4 & $2.116 \times 10^{-5}$ & SGD & 0.5 & - & MCE \\ \bottomrule
+	\end{tabular}
+	\caption[Hyperparameter Tuning Configurations]{Hyperparameter configurations used for each run performed. These were the values selected by the bayesian optimization and hyperband algorithm used to optimized the hyperparameters for the CurbNet model.}
+	\label{tab:appendix-hpoptimconfig}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{@{}crrrr@{}}
+		\cmidrule(r){1-4}
+		& \multicolumn{3}{c}{IoU} &  \\ \cmidrule(lr){2-4}
+		Run Number & Curb & Curb Cut & Ignore & mIoU \\ \midrule
+		1 & 0.918\% & 0.125\% & 50.919\% & 17.320\% \\
+		2 & 0.860\% & 0.136\% & 51.222\% & 17.406\% \\
+		3 & 0.080\% & 22.450\% & 83.008\% & 35.179\% \\
+		4 & 0.414\% & 0.289\% & 68.653\% & 23.11\% \\ \bottomrule
+	\end{tabular}
+	\caption[Hyperparameter Tuning Results]{Hyperparameter tuning results based on the configurations in Table \ref{tab:appendix-hpoptimconfig} after performing bayesian optimization and hyperband tuning with a budget of 5-10 epochs for each configuration.}
+	\label{tab:appendix-hpoptimresults}
+\end{table}

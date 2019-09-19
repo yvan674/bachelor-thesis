@@ -12,7 +12,7 @@
 	},
 }
 
-\begin{figure}
+\begin{figure}[t]
 	\centering
 	\resizebox{0.6\textwidth}{!}{
 		\begin{tikzpicture}[x=1.5cm, y=1.5cm, >=stealth]
@@ -26,14 +26,14 @@
 			\foreach \m [count=\y] in {1,missing,2}
 			  \node [every neuron/.try, neuron \m/.try ] (output-\m) at (4,1.5-\y) {};
 			% Input labels
-			\foreach \l [count=\i] in {1,2,3,n}
+			\foreach \l [count=\i] in {1,2,3,q}
 			  \draw [<-] (input-\i) -- ++(-1,0)
 			    node [above, midway] {$I_\l$};
 			% Hidden neuron labels
-			\foreach \l [count=\i] in {1,n}
+			\foreach \l [count=\i] in {1,r}
 			  \node [above] at (hidden-\i.north) {$H_\l$};
 			% Out arrows with labels
-			\foreach \l [count=\i] in {1,n}
+			\foreach \l [count=\i] in {1,s}
 			  \draw [->] (output-\i) -- ++(1,0)
 			    node [above, midway] {$O_\l$};
 			% Input to hidden arrows
@@ -50,5 +50,5 @@
 			\node [align=center, above] at (4,2) {Output \\ layer};
 		\end{tikzpicture}
 	}
-	\caption[Artificial Neural Networks]{A Visualization of how neurons interact within an artificial neural network.}\label{fig:background-neuralnet}
+	\caption[Artificial Neural Networks]{A Visualization of how neurons interact within an artificial neural network. In this example, the network has 3 layers: An input layer, a hidden layer, and an output layer. The input layer consists of $q$ neurons, each having one input value. Each of these inputs neurons are connected to each of the $r$ neuron in the hidden layer. Each neuron in the hidden layer is also connected to each neuron in the output layer. Finally, the output layer contains $s$ neurons and returns $s$ output values.}\label{fig:background-neuralnet}
 \end{figure}

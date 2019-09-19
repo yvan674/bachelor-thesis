@@ -1,18 +1,25 @@
 \chapter{Conclusion and Future Work}\label{chap:conclusion}
-In this work we propose CurbNet, a deep learning model that is capable of segmenting curbs and curb cuts in street-level imagery.
+In this work we proposed CurbNet, a deep learning model that is capable of segmenting road, sidewalk, curbs, and curb cuts in street-level imagery.
 CurbNet uses DeepLab v3+ to perform semantic segmentation on images and trains using a modified loss function known as masked cross entropy loss.
 
 Training and validation was performed on the Mapillary dataset \cite{mapillary}.
-We attempted to improve performance by introducing pixel coordinates to the input pixels, but this resulted in negligible gains and was thus omitted from the final model.
-Hyperparameter optimization was performed using the bayesian optimization and hyperband framework developed by the AutoML group at the University of Freiburg.
+Hyperparameter optimization was performed using the bayesian optimization and hyperband framework.
 
 To evaluate our model, we used mean Intersection over Union and used a validation subset of the Mapillary dataset.
-Our network was able to perform with \todo{value}\% mean IoU on this validation set.
-It is capable of segmenting curbs and curb cuts even when they are located at a distance, therefore being small relative to the rest of the image.
+Our network was able of achieving 50.188\% mIoU on this validation set.
+Our model is also capable of segmenting curbs and curb cuts when they are relatively small compared to the rest of the image, such as in the case of when they are located further away from the camera.
 In these cases, though, the network is prone to identifying areas around the curb as also being part of the curb itself.
-Failure cases typically occur at road edges which have a different material, but are not elevated, and with road markings which are located very close to the road edge.
+Failure cases include the network identifying certain road markings as curbs, identifying sidewalks that are made of an asphalt-like material as roads, and identifying roads as sidewalks.
 
-We propose that future work should be done with additional depth information.
-Including this information would reduce the number of ambiguous cases where a road edge is visually similar to a curb.
-Furthermore, we propose fully integrating our network with the pathfinder used by Obelix to fulfill the original motivation behind this work.
-By fully integrating CurbNet into the its pathfinder pipeline, we hope that we can increase Obelix's capabilities.
+We also show that our trained network can be used on the Obelix dataset and produce reasonable results, demonstrating that our model is generalizable to unseen data.
+
+Our hyperparameter tuning was performed with a very limited budget.
+It is therefore reasonable to assume that given increased compute resources and time, we would be able to find better optimized hyperparameters for our network.
+Furthermore, our network has also not shown any signs of overfitting to the training set after training for 30,366 iterations.
+We therefore believe that given increased compute resources and time, we could further train the network and achieve better results with our network.
+
+We propose that future work should be done with additional depth information and using LIDAR joint training.
+Including this information would reduce the number of ambiguous cases where a road marking is visually similar to a curb, thus increasing accuracy.
+The addition of depth information could also potentially increase the accuracy of curb cut detection, as visually, curbs and curb cuts tend to be quite similar.
+
+Finally, we hope to fully integrate CurbNet into Obelix's local trajectory planner pipeline.
