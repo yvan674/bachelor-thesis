@@ -13,3 +13,6 @@ The network is able to segment street images as seen here.
 ![Segmentation results](figures/experiments/results-mapillary/1.png)
 
 Code for this thesis can be found in my [CurbNet repo](https://github.com/yvan674/CurbNet)
+
+## Acknowledgements
+Thank you to [jfzhang95](https://github.com/jfzhang95) for the implementation of [DeepLab v3+ in Pytorch](https://github.com/jfzhang95/pytorch-deeplab-xception) which we ended up using as the basis of our experiments. 
